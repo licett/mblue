@@ -1,0 +1,2 @@
+#/bin/sh
+protoc -I/usr/include -I/mnt/e/project/github/nanopb/nanopb/generator/proto -I. --plugin=protoc-gen-nanopb=/mnt/e/project/github/nanopb/nanopb/generator/protoc-gen-nanopb --nanopb_out=. $1
