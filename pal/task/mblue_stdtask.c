@@ -50,27 +50,20 @@ void segment_bind(struct mblue_task *task, struct mblue_segment *ms)
 	ms->on_launch(ms);
 }
 
-#define	GET_CURRENT_CONTEXT()				\
-		(struct mblue_task *)list_entry(	\
-		xTaskGetCurrentTaskHandle(),		\
-		struct mblue_task,			\
-		task_obj)
-#define	GET_CURRENT_TASK_ID()				\
-		GET_CURRENT_CONTEXT()->task_id
-#define	GET_CURRENT_TASK_PRIORITY()			\
-		GET_CURRENT_CONTEXT()->priority
 struct mblue_task *get_current_context()
 {
 	uint32_t i;
 	struct mblue_task *t;
 	struct task_manager *tm;
 
-
 	tm = get_task_manager_instance();
 	for (i = 0; i < MBLUE_MAX_TASKS_IN_SYSTEM; i++) {
 		t = tm->task[i];
-		if (custom_current_task_equal())		
+		if (t && custom_current_task_equal(t->task_obj)) {
+			return t;
+		}
 	}
+	return NULL;
 }
 
 void task_sleep(uint32_t ms)

@@ -20,6 +20,7 @@
 #include "mblue_segment.h"
 #include "task_manager.h"
 void segment_bind(struct mblue_task *task, struct mblue_segment *ms);
+struct mblue_task *get_current_context();
 struct mblue_task *create_mblue_task(
 	struct mblue_task *task_instance,
 	int priority,		char *name,	

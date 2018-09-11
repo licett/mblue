@@ -26,7 +26,7 @@
 
 //NOTE: You should only use these macros in task context.
 #define	local_signal(src, mi, dest, data)				\
-	target_signal(src, GET_CURRENT_CONTEXT(), 0, mi, dest, data, NULL)
+	target_signal(src, get_current_context(), 0, mi, dest, data, NULL)
 
 #define	broadcast_signal_with_context(c, ma, mi, data)			\
 	mblue_message_post(c,						\
@@ -34,12 +34,12 @@
 		ma, mi, data, NULL, NULL, NULL)
 
 #define	broadcast_signal(ma, mi, data)					\
-	mblue_message_post(GET_CURRENT_CONTEXT(),			\
+	mblue_message_post(get_current_context(),			\
 		mblue_message_get_sequence(), SIGNAL,			\
 		ma, mi, data, NULL, NULL, NULL)
 
 #define	rpc_return(major, seq, data)					\
-	mblue_message_post(GET_CURRENT_CONTEXT(),			\
+	mblue_message_post(get_current_context(),			\
 		seq, CALL_RETURN,					\
 		major, 0, data, NULL, NULL, NULL)
 

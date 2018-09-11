@@ -16,10 +16,7 @@
  * =====================================================================================
  */
 
-#if defined(TI_RTOS_TASK)
-#include "custom_task_ti.h"
-#elif defined(MT_NUCLEUS_TASK)
-#include "custom_task_mt.h"
-#elif defined(FREERTOS_TASK)
-#include "custom_task_freertos.h"
-#endif
+#ifndef  CUSTOM_TASK_INC
+#define  CUSTOM_TASK_INC
+#include "custom_task_pthread.h"
+#endif   /* ----- #ifndef custom_task_INC  ----- */

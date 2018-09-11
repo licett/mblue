@@ -20,13 +20,18 @@
 #include "mblue_stddefine.h"
 
 #define	MAX_LOG_CACHE_LEN		128			/*  */
+#define LOG_STREAM			STREAM_STD 
 
+enum log_stream {
+	STREAM_SWO,
+	STREAM_RTT,
+	STREAM_STD,
+};
 
-enum log_type
-{
-	LOG_TYPE_SWO = 0x01,
-	LOG_TYPE_FLASH = 0x02,
-	LOG_TYPE_SERVICE = 0x04,
+enum log_type {
+	LOG_TYPE_PRINT = 0x01,
+	LOG_TYPE_STORAGE = 0x02,
+	LOG_TYPE_SERVER = 0x04,
 	LOG_TYPE_MAX = 0x07
 };
 

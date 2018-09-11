@@ -15,45 +15,15 @@
  *
  * =====================================================================================
  */
-#include <stdio.h>
 #include <stdarg.h>
-#include "stm32f4xx.h"
-#include "log.h"
-#include "SEGGER_RTT.h"
+#include "custom_log.h"
 #include "mb_persistence.h"
 #include "mblue_global_rpc_method.h"
 #include "mblue_clock.h"
 #include "mblue_heap.h"
 #include "mblue_assert.h"
 
-#ifndef LOG
-#define LOG 1 // 0:swo 1:rtt
-#endif
-
 struct mb_logger *lg = NULL;
-
-static int __itm_print(char *buffer)
-{
-	char *p, count;
-
-	p = buffer;
-	count = 0;
-	while(*p) {
-		ITM_SendChar(*p++);
-		count++;
-	}
-	return count == 0 ? -1 : count;
-}
-static int __rtt_print(char *buffer)
-{
-	SEGGER_RTT_WriteString(0, buffer);
-	return strlen(buffer);
-}
-
-static int (*mblue_log_print[])(char *buffer) = {
-	__itm_print,
-	__rtt_print,
-};
 
 /* 
  * ===  FUNCTION  ======================================================================
@@ -64,8 +34,8 @@ static int (*mblue_log_print[])(char *buffer) = {
 static int log_init(struct  log_manager *lm)
 {
 	lm->log_level = LOG_DEBUG;
-        lm->log_type = LOG_TYPE_SWO;
-	lm->set_stream(lm, mblue_log_print[LOG]);
+        lm->log_type = LOG_TYPE_PRINT;
+	lm->set_stream(lm, custom_print);
 
 	lg = get_log_instance();
 	lg->init(lg);
@@ -100,45 +70,41 @@ static int log_init(struct  log_manager *lm)
 
 static int _write_to_flash(uint8_t *data, uint32_t len)
 {
-	return lg->write(lg, data, len);
+	return -1;
 }
 
-static void _write_to_service(uint8_t *data, uint32_t len)
+static int _write_to_service(uint8_t *data, uint32_t len)
 {
-	modem_tcp_send(1, data, len);
+	return -1;
 }
 
 /**
  *  format current time
  * @param buffer [description]
  */
-static void _prinf_timer(char *buffer)
+static void _get_date(char *buffer)
 {
-    struct mblue_clock *_clock = mblue_clock_get_instance();
-    if (_clock) {
-
-        uint32_t time_tamp = _clock->get_utc(_clock);
-
-        struct mblue_clock_entity *_cur_time = _clock->get_calendar(_clock);
-        _ASSERT(_cur_time);
-        sprintf(buffer, "%d-%d-%d %d:%d:%d", _cur_time->year,
-                _cur_time->month,
-                _cur_time->day,
-                _cur_time->hour,
-                _cur_time->minute,
-                _cur_time->second);
-    }
+	struct mblue_clock *_clock = mblue_clock_get_instance();
+	struct mblue_clock_entity *_cur_time = _clock->get_calendar(_clock);
+	_ASSERT(_cur_time);
+	sprintf(buffer, "%d-%d-%d %d:%d:%d", _cur_time->year,
+		_cur_time->month,
+		_cur_time->day,
+		_cur_time->hour,
+		_cur_time->minute,
+		_cur_time->second);
 }
 
-static void _write_to_swo(struct log_manager *lm, uint8_t *data, uint32_t len){
+static void _write_to_terminal(struct log_manager *lm, uint8_t *data, uint32_t len){
 	if (lm->stream_write) {
 		char timer[32] = {0};
-		_prinf_timer(timer);
+		_get_date(timer);
 		char *temp = mblue_malloc(strlen(timer) + len + 8);
-		sprintf(temp, "%s  %s", timer, data);
-		(lm->stream_write)(temp);
-        mblue_free(temp);
-        temp = NULL;
+		if (temp) {
+			sprintf(temp, "%s  %s", timer, data);
+			(lm->stream_write)(temp);
+			mblue_free(temp);
+		}
 	}
 }
 
@@ -146,15 +112,15 @@ static int log_write(struct log_manager *lm, uint32_t level, char *buffer, uint3
 {
 	if(level <= lm->log_level){
 
-			if (lm->log_type & LOG_TYPE_SWO) {
-				_write_to_swo(lm, (uint8_t *)buffer, len);
+			if (lm->log_type & LOG_TYPE_PRINT) {
+				_write_to_terminal(lm, (uint8_t *)buffer, len);
 			}
 			
-			if (lm->log_type & LOG_TYPE_FLASH) {
+			if (lm->log_type & LOG_TYPE_STORAGE) {
 				_write_to_flash((uint8_t *)buffer, len);
 			}
 			
-			if (lm->log_type & LOG_TYPE_SERVICE) {
+			if (lm->log_type & LOG_TYPE_SERVER) {
 				_write_to_service((uint8_t *)buffer, len);
 			}
 	}

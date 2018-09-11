@@ -20,25 +20,14 @@
 #define  CUSTOM_TASK_PTHREAD_INC
 
 #include "mblue_stddefine.h"
+#include "mblue_errcode.h"
 #include <pthread.h>
 #include <sys/select.h>
 
 #define	task_handle			pthread_t 			/*  */
 typedef void *(* task_proc)(void *);
 
-#define	task_sleep(ms)					\
-		mblue_pthread_sleep(ms)
-#define	GET_CURRENT_CONTEXT()				\
-		(struct mblue_task *)list_entry(	\
-		xTaskGetCurrentTaskHandle(),		\
-		struct mblue_task,			\
-		task_obj)
-#define	GET_CURRENT_TASK_ID()				\
-		GET_CURRENT_CONTEXT()->task_id
-#define	GET_CURRENT_TASK_PRIORITY()			\
-		GET_CURRENT_CONTEXT()->priority
-
-void mblue_pthread_sleep(uint32_t delay_ms)
+static void custom_task_sleep(uint32_t delay_ms)
 {
 	struct timeval tm;
 
@@ -46,6 +35,11 @@ void mblue_pthread_sleep(uint32_t delay_ms)
 	tm.tv_usec = (delay_ms - tm.tv_sec * 1000) * 1000;
 
 	select(0,NULL,NULL,NULL,&tm);
+}
+
+static BOOL custom_current_task_equal(task_handle task)
+{
+	return pthread_equal(pthread_self(), task) == 0 ? FALSE : TRUE;
 }
 
 #define	_task_construct(t)							\
