@@ -102,7 +102,7 @@ void *mblue_remote_call(uint16_t major, uint16_t minor, void *in)
 	void *out;
 
 	rc = mblue_message_post(
-		GET_CURRENT_CONTEXT(),			
+		get_current_context(),			
 		mblue_message_get_sequence(), 
 		SYNC_CALL,		
 		major, minor, 
@@ -122,7 +122,7 @@ mblue_errcode mblue_remote_call_async(uint16_t major, uint16_t minor,
 	struct pending_notifier pn = {notify, data};
 
 	rc = mblue_message_post(
-		GET_CURRENT_CONTEXT(),			
+		get_current_context(),			
 		mblue_message_get_sequence(), 
 		ASYNC_CALL,		
 		major, minor, 

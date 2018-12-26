@@ -20,6 +20,7 @@
 #define  custom_timer_INC
 
 #include <time.h>
+#include <signal.h>
 #include "mblue_timer.h"
 
 /*-----------------------------------------------------------------------------
@@ -90,7 +91,7 @@ static int platform_timer_init(struct mblue_timer *timer, uint32_t period,
 	bool auto_reload, void (*notify)(void *), void *data)
 {
 	int rc;
-	sigevent sigev;
+	struct sigevent sigev;
 	timer_t timerid;
 	struct posix_timer *pt;
 	struct itimerspec itval, oitval;

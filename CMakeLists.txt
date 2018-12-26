@@ -120,4 +120,4 @@ set(SOURCE_FILES
         util/hash/mblue_hash.h)
 
 add_executable(mblue ${SOURCE_FILES})
-target_link_libraries(mblue pthread)
+target_link_libraries(mblue pthread rt)

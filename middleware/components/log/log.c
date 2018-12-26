@@ -17,7 +17,6 @@
  */
 #include <stdarg.h>
 #include "custom_log.h"
-#include "mb_persistence.h"
 #include "mblue_global_rpc_method.h"
 #include "mblue_clock.h"
 #include "mblue_heap.h"
@@ -37,8 +36,6 @@ static int log_init(struct  log_manager *lm)
         lm->log_type = LOG_TYPE_PRINT;
 	lm->set_stream(lm, custom_print);
 
-	lg = get_log_instance();
-	lg->init(lg);
 	return 0;
 }		/* -----  end of function log_init  ----- */
 

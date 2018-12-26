@@ -17,7 +17,7 @@ static void service_launch(struct mblue_segment *ms)
 	ls = (struct LOG_SERVICE *)ms;
 
 	log = logger_get_instance();
-	log->set_type(log, LOG_TYPE_SWO);
+	log->set_type(log, LOG_STREAM);
 }
 
 static SMART_DATA _write_log(uint32_t level, uint8_t *buffer, uint32_t len)

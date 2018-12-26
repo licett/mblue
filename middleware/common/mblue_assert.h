@@ -28,12 +28,6 @@
 
 
 #else
-#include "mblue_system.h"
-#define	_ASSERT(x)									\
-				do {							\
-					if (!(x))	{		                \
-						mblue_system_reset();		\
-                                        }						\
-				}while(0)		/*  */
+#define	_ASSERT(x)									
 #endif
 #endif   /* ----- #ifndef _assert_INC  ----- */

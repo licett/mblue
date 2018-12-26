@@ -33,10 +33,7 @@ static mblue_errcode semaphore_init(struct mblue_semaphore *sem)
 	_ASSERT(!sem->magic);
 
 	sem->magic = MBLUE_SEMAPHORE_MAGIC;
-	platform_semaphore_init(sem);
-	_ASSERT(sem->_obj);
-
-	return sem->_obj != NULL ? MBLUE_OK : MBLUE_ERR_SEMAPHORE;
+	return platform_semaphore_init(sem);
 }
 
 /* 
@@ -51,7 +48,6 @@ static mblue_errcode semaphore_pend(struct mblue_semaphore *sem, uint32_t timeou
 {
 	_ASSERT(sem);
 	_ASSERT(sem->magic == MBLUE_SEMAPHORE_MAGIC);
-	_ASSERT(sem->_obj);
 	return platform_semaphore_pend(sem, timeout);
 }
 
@@ -65,7 +61,6 @@ static mblue_errcode semaphore_pend(struct mblue_semaphore *sem, uint32_t timeou
 static mblue_errcode semaphore_post(struct mblue_semaphore *sem)
 {
 	_ASSERT(sem);
-	_ASSERT(sem->_obj);
 	_ASSERT(sem->magic == MBLUE_SEMAPHORE_MAGIC);
 	return platform_semaphore_post(sem);
 }
@@ -80,7 +75,6 @@ static mblue_errcode semaphore_post(struct mblue_semaphore *sem)
 static mblue_errcode semaphore_uninit(struct mblue_semaphore *sem)
 {
 	_ASSERT(sem);
-	_ASSERT(sem->_obj);
 	_ASSERT(sem->magic == MBLUE_SEMAPHORE_MAGIC);
 	platform_semaphore_uninit(sem);
 	sem->magic = 0;
@@ -118,10 +112,10 @@ mblue_errcode mblue_semaphore_free(struct mblue_semaphore *sem)
 
 mblue_errcode mblue_semaphore_construct(struct mblue_semaphore *sem)
 {
-	sem->init = sem_init;
-	sem->pend = sem_pend;
-	sem->post = sem_post;
-	sem->uninit = sem_uninit;
+	sem->init = semaphore_init;
+	sem->pend = semaphore_pend;
+	sem->post = semaphore_post;
+	sem->uninit = semaphore_uninit;
 
 	if (!sem->init(sem)) {
 		return MBLUE_OK;
