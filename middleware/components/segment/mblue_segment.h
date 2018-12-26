@@ -23,6 +23,7 @@
 #define	HANDLER_ITEM(id, function)	{id, (void *)function}			
 
 #include "mblue_stddefine.h"
+#include "mblue_message.h"
 struct mblue_segment;
 typedef mblue_errcode (*mblue_segment_handle_t)(struct mblue_segment *ms, void *data);
 typedef mblue_errcode (*mblue_none_param_func_t)(void);

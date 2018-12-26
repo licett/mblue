@@ -59,13 +59,6 @@ extern mblue_errcode log_on_create(struct mblue_task *task);
 /* priority is from low to high */
 struct mblue_task mblue_preload_tasks[] = {
 	DECLARE_PRELOAD_TASK(user_space, 4),
-	DECLARE_PRELOAD_TASK(led, 5),
-	DECLARE_PRELOAD_TASK(gps, 6),
-	DECLARE_PRELOAD_TASK(mqtt, 7),
-	DECLARE_PRELOAD_TASK(log, 8),
-	DECLARE_PRELOAD_TASK(modem, MBLUE_MAX_TASKS_IN_SYSTEM - 4),
-	DECLARE_PRELOAD_TASK(at, MBLUE_MAX_TASKS_IN_SYSTEM - 3),
-	DECLARE_PRELOAD_TASK(device, MBLUE_MAX_TASKS_IN_SYSTEM - 2),
 	DECLARE_PRELOAD_TASK(bus, MBLUE_MAX_TASKS_IN_SYSTEM - 1),
 };
 #endif   /* ----- #ifndef task_INC  ----- */

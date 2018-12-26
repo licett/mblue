@@ -24,6 +24,7 @@ struct mblue_timer {
 	//platform_timer_obj _obj;
 	//platform_timer_param _param;
 	void *_obj;
+	void *_param;
 	struct list_head list;
 	
 	int (*init)(struct mblue_timer *timer, void (*notify)(void *), 

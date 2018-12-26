@@ -11,8 +11,8 @@
  ***************************************************************************/
 //#include <intrinsics.h>
 
-#ifndef __ARM_COMM_DEF_H
-#define __ARM_COMM_DEF_H
+#ifndef __MBLUE_COMM_DEF_H
+#define __MBLUE_COMM_DEF_H
 
 #define MHZ           *1000000l
 #define KHZ           *1000l
@@ -21,15 +21,7 @@
 typedef enum {
 	FALSE, TRUE
 } BOOL;
-/*
-#ifndef FALSE
-#define FALSE (1 == 0)
-#endif
 
-#ifndef TRUE
-#define TRUE  (1 == 1)
-#endif
-*/
 #ifndef NULL
 #define NULL ((void*)0)
 #endif
@@ -69,89 +61,6 @@ typedef unsigned int        * pBoolean;
 typedef void * (*CommUserFpnt_t)(void *);
 typedef void   (*VoidFpnt_t)(void);
 
-// Atomic exchange of data between a memory cell and a register
-// return value of the memory cell
-#if __CORE__ < 7
-inline __arm Int32U AtomicExchange (Int32U State, pInt32U Flag)
-{
-  asm("swp  r0, r0, [r1]");
-  return(State);
-}
-
-#define IRQ_FLAG        0x80
-#define FIQ_FLAG        0x40
-
-inline __arm Int32U EntrCritSection(void)
-{
-unsigned long tmp;
-  tmp = __get_CPSR();
-  __set_CPSR(tmp | IRQ_FLAG);
-  return(tmp);
-}
-
-inline __arm void ExtCritSection(Int32U Save)
-{
-unsigned long tmp;
-  tmp = __get_CPSR();
-  __set_CPSR(tmp & (Save | ~IRQ_FLAG));
-}
-
-inline __arm Int32U EntrCritSectionFiq(void)
-{
-unsigned long tmp;
-  tmp = __get_CPSR();
-  __set_CPSR(tmp | (IRQ_FLAG | FIQ_FLAG));
-  return(tmp);
-}
-
-inline __arm void ExtCritSectionFiq(Int32U Save)
-{
-unsigned long tmp;
-  tmp = __get_CPSR();
-  __set_CPSR(tmp & (Save | ~(IRQ_FLAG | FIQ_FLAG)));
-}
-
-#define ENTR_CRT_SECTION(Save) Save = EntrCritSection()
-#define EXT_CRT_SECTION(Save)  ExtCritSection(Save)
-
-#define ENTR_CRT_SECTION_F(Save) Save = EntrCritSectionFiq()
-#define EXT_CRT_SECTION_F(Save)  ExtCritSectionFiq(Save)
-
-#elif  ((__CORE__ == __ARM6M__) || (__CORE__ == __ARM6SM__) || (__CORE__ == __ARM7M__) || (__CORE__ == __ARM7EM__))
-
-extern Int32U CriticalSecCntr;
-
-inline void EntrCritSection(void)
-{
-  if(CriticalSecCntr == 0)
-  {
-    asm("CPSID i");
-  }
-  // avoid lost of one count in case of simultaneously calling from both places
-  ++CriticalSecCntr;
-}
-
-inline void ExtCritSection(void)
-{
-  if(--CriticalSecCntr == 0)
-  {
-    asm("CPSIE i");
-  }
-}
-
-inline Int32U AtomicExchange (Int32U State, pInt32U Flag)
-{
-Int32U Hold;
-  EntrCritSection();
-  Hold = *Flag;
-  *Flag = State;
-  ExtCritSection();
-  return(Hold);
-}
-
-#define ENTR_CRT_SECTION() EntrCritSection()
-#define EXT_CRT_SECTION()  ExtCritSection()
-#endif
 
 #define LongToBin(n) (((n >> 21) & 0x80) | \
                       ((n >> 18) & 0x40) | \
@@ -180,4 +89,4 @@ enum led_action_type {
 	LED_ACTION_MAX
 };
 
-#endif // __ARM_COMM_DEF_H
+#endif // __MBLUE_COMM_DEF_H

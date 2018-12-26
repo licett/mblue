@@ -31,8 +31,8 @@
 	global_init_module[id] =  fn
 
 #define	MINOR_FUNCTION(minor)		CONCAT2E(TASK_NAME, minor)			/*  */
-#define	__STRING(name)			#name					/*  */
-#define	STRING(name)			__STRING(name)				/*  */
+#define	____STRING(name)			#name					/*  */
+#define	STRING(name)			____STRING(name)				/*  */
 
 #define	TASK_STRING_NAME		STRING(TASK_NAME)			/*  */
 #define	TASK_ID				CONCAT2E(TASK_NAME, _id)		/*  */

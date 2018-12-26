@@ -22,7 +22,7 @@
 #include "mblue_message.h"
 #include "mblue_semaphore.h"
 #include "custom_task.h"
-#include "system_bus.h"
+//#include "system_bus.h"
 
 #ifndef  MBLUE_MAX_TASKS_IN_SYSTEM
 #define  MBLUE_MAX_TASKS_IN_SYSTEM			16

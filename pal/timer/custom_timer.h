@@ -19,67 +19,132 @@
 #ifndef  custom_timer_INC
 #define  custom_timer_INC
 
+#include <time.h>
 #include "mblue_timer.h"
+
 /*-----------------------------------------------------------------------------
  * platform related type define 
  *-----------------------------------------------------------------------------*/
-#include "FreeRTOS.h"
-#include "timers.h"
-extern int32_t NVIC_IsInterrupt(void);
+struct posix_timer {
+	timer_t id;
+	struct itimerspec spec;
+	void (*notify)(void *);
+};
+
 static int platform_timer_stop(struct mblue_timer *timer)
 {
-	if (NVIC_IsInterrupt()) {
-		BaseType_t xHigherPriorityTaskWoken;
-		xHigherPriorityTaskWoken = pdFALSE;
-		if (xTimerStopFromISR(timer->_obj, &xHigherPriorityTaskWoken) == pdTRUE) {
-			return 0;
-		}
-	} else {
-		if (xTimerStop(timer->_obj, 0) == pdPASS) {
-			return 0;
-		}
+	int rc;
+	struct posix_timer *pt;
+
+	rc = -1;
+	pt = (struct posix_timer *)timer->_obj;
+	if (pt) {
+		timer->_obj = NULL;
+		memset(&pt->spec, 0, sizeof(struct itimerspec));
+		rc =  timer_settime(pt->id, 0, &pt->spec, NULL);
+		mblue_free(pt);
 	}
-	return -1;
+
+	return rc;
 }
 
 static int platform_timer_start(struct mblue_timer *timer)
 {
-	if (NVIC_IsInterrupt()) {
-		BaseType_t xHigherPriorityTaskWoken;
-		xHigherPriorityTaskWoken = pdFALSE;
-		if (xTimerStartFromISR(timer->_obj, &xHigherPriorityTaskWoken) == pdTRUE) {
-			return 0;
-		}
-	} else {
-		if (xTimerStart(timer->_obj, 0) == pdPASS) {
-			return 0;
-		}
+	int rc;
+	struct posix_timer *pt;
+
+	rc = -1;
+	pt = (struct posix_timer *)timer->_obj;
+	if (pt) {
+		rc = timer_settime(pt->id, 0, &pt->spec, NULL);
 	}
-	return -1;
+	return rc;
 }
 
 static int platform_timer_alive(struct mblue_timer *timer)
 {
-	return (xTimerIsTimerActive(timer->_obj) != pdFALSE);
+	int alive, rc;
+	struct posix_timer *pt;
+	struct itimerspec current;
+
+	alive = 0;
+	pt = (struct posix_timer *)timer->_obj;
+	if (!pt) {
+		goto alive_exit;
+	}
+	
+	memset(&current, 0, sizeof(current));
+	rc = timer_gettime(pt->id, &current);	
+	if (rc) {
+		goto alive_exit;
+	}
+	if (current.it_value.tv_sec || current.it_value.tv_nsec) {
+		alive = 1;
+	}
+
+alive_exit:
+	return alive;
 }
 
 static int platform_timer_init(struct mblue_timer *timer, uint32_t period, 
 	bool auto_reload, void (*notify)(void *), void *data)
 {
-	timer->_obj = xTimerCreate(NULL, 
-		pdMS_TO_TICKS(period), 
-		auto_reload ? pdTRUE : pdFALSE, 
-		data,
-		notify);
-	return timer->_obj == NULL ? -1 : 0;
+	int rc;
+	sigevent sigev;
+	timer_t timerid;
+	struct posix_timer *pt;
+	struct itimerspec itval, oitval;
+
+	rc = -1;
+	timerid = 0;
+	memset(&sigev, 0, sizeof(sigev));
+	sigev.sigev_notify          = SIGEV_SIGNAL;
+	sigev.sigev_signo           = SIGUSR1;
+	sigev.sigev_value.sival_ptr = timer;
+
+	rc = timer_create(CLOCK_MONOTONIC, &sigev, &timerid);
+	if (rc) {
+		goto init_exit;
+	}
+	pt = (struct posix_timer *)mblue_malloc(
+				sizeof(struct posix_timer));
+	pt->id = timerid;
+	pt->spec.it_value.tv_sec = period / 1000;
+	pt->spec.it_value.tv_nsec = (period % 1000) * 1000000;
+	if (auto_reload) {
+		pt->spec.it_interval.tv_sec = pt->spec.it_value.tv_sec ;
+		pt->spec.it_interval.tv_nsec = pt->spec.it_value.tv_nsec;
+	}
+	pt->notify = notify;
+	timer->_obj = (void *)pt;
+
+init_exit:
+	return rc;
 }
 
 static int platform_timer_uninit(struct mblue_timer *timer)
 {
-	if (xTimerDelete(timer->_obj, 0) == pdPASS) {
-		timer->_obj = NULL;
-		return 0;
+	return platform_timer_stop(timer);
+}
+
+static void __timer_notify(int sig, siginfo_t *si, void *uc)
+{
+	struct mblue_timer *timer;
+
+	timer = si->si_value.sival_ptr;
+	if (timer) {
+			
 	}
-	return -1;
+}
+
+static int platform_timer_preinit(void)
+{
+	struct sigaction sa;
+
+	sa.sa_flags = SA_SIGINFO;
+	sa.sa_sigaction = __timer_notify;
+	sigemptyset(&sa.sa_mask);
+
+	return sigaction(SIGUSR1, &sa, NULL);
 }
 #endif   /* ----- #ifndef custom_timer_INC  ----- */

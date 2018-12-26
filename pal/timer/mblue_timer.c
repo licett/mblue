@@ -131,6 +131,7 @@ struct timer_list *get_timer_list_instance()
 	if (mlist == NULL) {
 		mlist = &_timer_list;
 		mlist->init(mlist);
+		platform_timer_preinit();
 	}
 	return mlist;
 }

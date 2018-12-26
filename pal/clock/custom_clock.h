@@ -101,7 +101,7 @@ static int get_system_calendar(uint16_t *year, uint8_t *month, uint8_t *day,
 	time_t timep;   
 	struct tm *p; 
 
-	rc = -1
+	rc = -1;
 	time(&timep);   
 	p = localtime(&timep);
 	if (p) {
