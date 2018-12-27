@@ -25,5 +25,6 @@ int main(void)
 	}
 
 	printf("hello\n");
+	while (1);
 	
 }

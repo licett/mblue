@@ -108,18 +108,7 @@ static void _write_to_terminal(struct log_manager *lm, uint8_t *data, uint32_t l
 static int log_write(struct log_manager *lm, uint32_t level, char *buffer, uint32_t len)
 {
 	if(level <= lm->log_level){
-
-			if (lm->log_type & LOG_TYPE_PRINT) {
 				_write_to_terminal(lm, (uint8_t *)buffer, len);
-			}
-			
-			if (lm->log_type & LOG_TYPE_STORAGE) {
-				_write_to_flash((uint8_t *)buffer, len);
-			}
-			
-			if (lm->log_type & LOG_TYPE_SERVER) {
-				_write_to_service((uint8_t *)buffer, len);
-			}
 	}
 
 	return 0;
