@@ -23,12 +23,19 @@
 #include "mblue_stdtask.h"
 
 #include "system_bus_service.h"
+#include "log_service.h"
 #include "simple_scenario.h"
 
 mblue_errcode user_space_on_create(struct mblue_task *task)
 {
 		segment_bind(task, GET_SEGMENT_FROM_SCENARIO_INSTANCE(SIMPLE_SCENARIO));
         return MBLUE_OK;
+}
+
+mblue_errcode log_on_create(struct mblue_task *task)
+{
+	segment_bind(task, GET_SEGMENT_FROM_SERVICE_INSTANCE(LOG_SERVICE));
+	return MBLUE_OK;
 }
 
 mblue_errcode bus_on_create(struct mblue_task *task)
