@@ -23,7 +23,7 @@
 
 static mblue_errcode platform_semaphore_init(struct mblue_semaphore *sem)
 {
-	return sem_init(&sem->_obj, 0, 1) == 0 ? 
+	return sem_init(&sem->_obj, 0, 0) == 0 ? 
 				MBLUE_OK : MBLUE_ERR_SEMAPHORE;
 }
 
