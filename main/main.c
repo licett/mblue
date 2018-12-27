@@ -23,5 +23,7 @@ int main(void)
 			task->on_create
 			);
 	}
+
+	printf("hello\n");
 	
 }

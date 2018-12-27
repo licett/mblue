@@ -119,5 +119,22 @@ set(SOURCE_FILES
         util/hash/mblue_hash.c
         util/hash/mblue_hash.h)
 
+IF( NOT CMAKE_BUILD_TYPE )
+   SET( CMAKE_BUILD_TYPE Release ... FORCE )
+ENDIF()
+
+macro(print_all_variables)
+    message(STATUS "print_all_variables------------------------------------------{")
+    get_cmake_property(_variableNames VARIABLES)
+    foreach (_variableName ${_variableNames})
+        message(STATUS "${_variableName}=${${_variableName}}")
+    endforeach()
+    message(STATUS "print_all_variables------------------------------------------}")
+endmacro()
+
 add_executable(mblue ${SOURCE_FILES})
 target_link_libraries(mblue pthread rt)
+print_all_variables()
+#target_compile_options(mblue
+#	PRIVATE -g
+#)

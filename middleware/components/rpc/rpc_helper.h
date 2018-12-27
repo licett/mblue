@@ -20,6 +20,7 @@
 /*#include "mblue_errcode.h"*/
 #include "mblue_stddefine.h"
 #include "mblue_message.h"
+#include "mblue_stdtask.h"
 #include "rpc.h"
 #include "data_schema.h"
 #include "mblue_segment.h"

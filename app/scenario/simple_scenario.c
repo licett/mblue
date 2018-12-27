@@ -29,7 +29,7 @@
 //@override
 static void scenario_launch(struct mblue_segment *ms)
 {
-	LOGGER(LOG_DEBUG, " hello\n");
+	LOGGER(LOG_DEBUG, " hello again\n");
 }
 
 //@override

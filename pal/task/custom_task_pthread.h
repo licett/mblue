@@ -51,7 +51,7 @@ static BOOL custom_current_task_equal(task_handle task)
 		_ASSERT(!rc);									\
 		rc = pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);		\
 		_ASSERT(!rc);									\
-		rc = pthread_attr_setstacksize(&attr, t->task_stack);				\
+		rc = pthread_attr_setstacksize(&attr, t->stack_size);				\
 		_ASSERT(!rc);									\
 		param.sched_priority = sched_get_priority_min(SCHED_FIFO) + t->priority;	\
 		rc = pthread_attr_setschedparam(&attr,&param);					\

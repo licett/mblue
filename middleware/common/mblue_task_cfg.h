@@ -58,7 +58,7 @@ extern mblue_errcode log_on_create(struct mblue_task *task);
 
 /* priority is from low to high */
 struct mblue_task mblue_preload_tasks[] = {
-	DECLARE_PRELOAD_TASK(user_space, 4),
 	DECLARE_PRELOAD_TASK(bus, MBLUE_MAX_TASKS_IN_SYSTEM - 1),
+	DECLARE_PRELOAD_TASK(user_space, 4),
 };
 #endif   /* ----- #ifndef task_INC  ----- */

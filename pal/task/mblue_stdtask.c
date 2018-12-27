@@ -87,7 +87,7 @@ static mblue_errcode template_post(struct mblue_task *task)
 	return sem->post(sem);
 }
 
-static void template_proc(void *a0)
+static void *template_proc(void *a0)
 {
 	bool ret;
 	uint8_t type;
@@ -117,6 +117,9 @@ static void template_proc(void *a0)
 			(ms->get_handler(ms, type))(ms, msg);
 		}
 	}
+
+// should never run to here
+	return NULL;
 }
 
 static mblue_errcode template_msg_post(struct mblue_task *task, struct mblue_message *msg)

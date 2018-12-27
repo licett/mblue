@@ -19,6 +19,7 @@
 #include "mblue_stddefine.h"
 #include "mblue_list.h"
 #include "mblue_assert.h"
+#include "mblue_heap.h"
 #include "custom_timer.h"
 #include "custom_int.h"
 
