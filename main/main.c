@@ -24,7 +24,6 @@ int main(void)
 			);
 	}
 
-	printf("hello\n");
-	while (1);
+	pthread_exit(NULL);
 	
 }
