@@ -42,7 +42,7 @@
 	}
 
 struct mblue_byte_bundler {
-	uint32_t len;
+	size_t len;
 	uint8_t *byte;
 };
 typedef SMART_DATA (*mblue_pb_parser_func_t)(pb_istream_t *, void *); 

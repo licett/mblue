@@ -57,7 +57,7 @@ struct log_manager
 	void (* set_type)(struct log_manager *lm, uint32_t type);
 
 	
-	//char cache[MAX_LOG_CACHE_LEN];
+	char cache[MAX_LOG_CACHE_LEN];
 	uint32_t log_level;
 	uint32_t log_type;
 };

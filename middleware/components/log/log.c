@@ -65,26 +65,18 @@ static int log_init(struct  log_manager *lm)
 // }		/* -----  end of function summary_write  ----- */
 
 
-static int _write_to_flash(uint8_t *data, uint32_t len)
-{
-	return -1;
-}
-
-static int _write_to_service(uint8_t *data, uint32_t len)
-{
-	return -1;
-}
-
 /**
  *  format current time
  * @param buffer [description]
  */
-static void _get_date(char *buffer)
+static size_t _get_date(char *buffer)
 {
 	struct mblue_clock *_clock = mblue_clock_get_instance();
 	struct mblue_clock_entity *_cur_time = _clock->get_calendar(_clock);
 	_ASSERT(_cur_time);
-	sprintf(buffer, "%d-%d-%d %d:%d:%d", _cur_time->year,
+	return snprintf(buffer, MAX_CALENDAR_STRING_LEN, 
+		"%d-%d-%d %d:%d:%d", 
+		_cur_time->year,
 		_cur_time->month,
 		_cur_time->day,
 		_cur_time->hour,
@@ -93,22 +85,20 @@ static void _get_date(char *buffer)
 }
 
 static void _write_to_terminal(struct log_manager *lm, uint8_t *data, uint32_t len){
+	size_t date_len;
+
 	if (lm->stream_write) {
-		char timer[32] = {0};
-		_get_date(timer);
-		char *temp = mblue_malloc(strlen(timer) + len + 8);
-		if (temp) {
-			sprintf(temp, "%s  %s", timer, data);
-			(lm->stream_write)(temp);
-			mblue_free(temp);
-		}
+		memset(lm->cache, 0, MAX_LOG_CACHE_LEN);
+		date_len = _get_date(lm->cache);
+		snprintf(lm->cache + date_len, MAX_LOG_CACHE_LEN - date_len, " %s\n", data);
+		(lm->stream_write)(lm->cache);
 	}
 }
 
 static int log_write(struct log_manager *lm, uint32_t level, char *buffer, uint32_t len)
 {
 	if(level <= lm->log_level){
-				_write_to_terminal(lm, (uint8_t *)buffer, len);
+		_write_to_terminal(lm, (uint8_t *)buffer, len);
 	}
 
 	return 0;

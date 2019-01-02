@@ -495,43 +495,57 @@ static void log_notify(void *data, void *user_data){
 
 }
 
-static bool __log_get_file_name(uint8_t *full_path, uint32_t len, uint8_t *file_name)
+static uint8_t *__log_get_file_name_pointer(uint8_t *full_path, uint32_t len)
 {
-	uint8_t *p = full_path;
-	uint32_t cur_pos = len;
-	while (cur_pos--) {
-		uint8_t c = *(p + cur_pos);
-		if (c == '\\') {
-			memcpy(file_name, p + cur_pos + 1, len - (cur_pos + 1));
+	uint8_t *p, *q, c;
+	size_t pos;
+	
+	p = full_path;
+	q = NULL;
+	pos = len;
+	while (pos--) {
+		c = *(p + pos);
+		if (c == '\\' || c == '/') {
+			q = p + pos + 1;
 			break;
 		}
 	}
-	return true;
+	return q;
 }
 
 mblue_errcode log_service_write(uint32_t level, uint8_t *source, void *fmt, ...)
 {
-	if (level >= LOG_LEVEL_MAX)
-		return MBLUE_ERR_UNKNOWN;
-
-	mblue_errcode rc;
-	void *payload;
-
+	char *tmp;
+	uint8_t *p;
 	va_list args;
+	void *payload;
+	size_t log_len;
+	mblue_errcode rc;
+	
+	if (level >= LOG_LEVEL_MAX) {
+		rc = MBLUE_ERR_LOG_LEVEL;
+		goto log_exit;
+	}
 
-	char buffer[128] = {0};
-	int len = 0;
+	tmp = mblue_malloc(MAX_LOG_CACHE_LEN);
+	if (!tmp) {
+		rc = MBLUE_ERR_NOMEM;
+		goto log_exit;
+	}
+
+	log_len = 0;
+	p = __log_get_file_name_pointer(source, 
+			strlen((char const*)source));
+	if (p) {
+		log_len = snprintf(tmp, 
+			MAX_LOG_CACHE_LEN - 1, "%s[%d] ", p, level);
+	}
 	va_start(args, fmt);
-	len = vsnprintf(buffer, sizeof(buffer), fmt, args);
+	log_len = vsnprintf(tmp + log_len, 
+		MAX_LOG_CACHE_LEN - log_len, fmt, args);
 	va_end(args);
 
-	uint8_t file_name[32] = {0};
-	__log_get_file_name(source, strlen((char const*)source), file_name);
-
-	uint8_t *temp = mblue_malloc(strlen((char const*)file_name) + len + 8 );
-	sprintf((char *)temp, " %s [%d] %s", (char *)file_name, level, buffer);
-
-	struct mblue_byte_bundler bundler = {strlen((char const*)temp), temp};
+	struct mblue_byte_bundler bundler = {strlen(tmp), (uint8_t *)tmp};
 	dl_12 dl = {
 		level,
 		{
@@ -542,12 +556,13 @@ mblue_errcode log_service_write(uint32_t level, uint8_t *source, void *fmt, ...)
 
 	rc = MBLUE_ERR_PB_ENCODE;
 	payload = mblue_serialize_rpc("log_service_write", PB_12, &dl);
-	mblue_free(temp);
-	temp = NULL;
+	mblue_free(tmp);
 	if (payload) {
 		rc = mblue_remote_call_async(
 		                  MBLUE_LOG_SERVICE, MBLUE_LOG_SERVICE_LOG, payload, log_notify, NULL);
 	}
+
+log_exit:
 	return rc;
 }
 
@@ -564,7 +579,7 @@ mblue_errcode log_service_hex(const char *prefix, const char *buffer, size_t len
 	
 	for(i = 0; i < len; i++) {
 		q = p + strlen(p);
-		unsigned char c = buffer[i]; // must use unsigned char to print >128 value
+		unsigned char c = buffer[i]; 
 		if( c < 16) {
 			snprintf(q, 3, "0%x", c);
 		} else {

@@ -19,10 +19,12 @@
 #ifndef  _assert_INC
 #define  _assert_INC
 #ifdef DEBUG
+#include "mblue_logger.h"
 #define	_ASSERT(x)									\
 				do {							\
 					if (!(x))	{		                \
 						__asm volatile("BKPT #01");		\
+						LOGGER(LOG_DEBUG, "assert failed\n");	\
                                         }						\
 				}while(0)		/*  */
 

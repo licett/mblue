@@ -20,6 +20,7 @@
 #define  mblue_clock_INC
 #include <stdint.h>
 
+#define	MAX_CALENDAR_STRING_LEN			20	/*yyyy-mm-dd hh:mm:ss*/
 struct mblue_clock_entity {
 	uint16_t year;
 	uint8_t month;

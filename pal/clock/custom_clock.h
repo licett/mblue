@@ -105,12 +105,12 @@ static int get_system_calendar(uint16_t *year, uint8_t *month, uint8_t *day,
 	time(&timep);   
 	p = localtime(&timep);
 	if (p) {
-		printf("%d-%d-%d %d:%d:%d\n", (1900 + p->tm_year), ( 1 + p->tm_mon), p->tm_mday,
-			(p->tm_hour + 12), p->tm_min, p->tm_sec); 
+		/*printf("%d-%d-%d %d:%d:%d\n", (1900 + p->tm_year), ( 1 + p->tm_mon), p->tm_mday,
+			(p->tm_hour), p->tm_min, p->tm_sec); */
 		*year = 1900 + p->tm_year;
 		*month = 1 + p->tm_mon;
 		*day = p->tm_mday;
-		*hour = p->tm_hour + 12;
+		*hour = p->tm_hour;
 		*minute = p->tm_min;
 		*second = p->tm_sec;
 		rc = 0;

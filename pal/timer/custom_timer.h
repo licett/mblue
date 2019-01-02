@@ -30,6 +30,7 @@ struct posix_timer {
 	timer_t id;
 	struct itimerspec spec;
 	void (*notify)(void *);
+	void *param;
 };
 
 static int platform_timer_stop(struct mblue_timer *timer)
@@ -117,6 +118,7 @@ static int platform_timer_init(struct mblue_timer *timer, uint32_t period,
 		pt->spec.it_interval.tv_nsec = pt->spec.it_value.tv_nsec;
 	}
 	pt->notify = notify;
+	pt->param = data;
 	timer->_obj = (void *)pt;
 
 init_exit:
@@ -131,10 +133,12 @@ static int platform_timer_uninit(struct mblue_timer *timer)
 static void __timer_notify(int sig, siginfo_t *si, void *uc)
 {
 	struct mblue_timer *timer;
+	struct posix_timer *pt;
 
 	timer = si->si_value.sival_ptr;
-	if (timer) {
-			
+	if (timer && timer->_obj) {
+		pt = timer->_obj;
+		(pt->notify)(pt->param);
 	}
 }
 

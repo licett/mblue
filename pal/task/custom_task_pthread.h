@@ -42,6 +42,13 @@ static BOOL custom_current_task_equal(task_handle task)
 	return pthread_equal(pthread_self(), task) == 0 ? FALSE : TRUE;
 }
 
+static void custom_task_run()
+{
+	// no extra operations are needed here, 
+	// just make sure main thread return
+	pthread_exit(NULL);
+}
+
 #define	_task_construct(t)									\
         do {											\
 		int rc;										\
@@ -58,5 +65,5 @@ static BOOL custom_current_task_equal(task_handle task)
 		_ASSERT(!rc);									\
 		rc = pthread_create(&t->task_obj, &attr, t->tproc, t);				\
 		_ASSERT(!rc);									\
-	}while(0)
+	} while(0)
 #endif   /* ----- #ifndef CUSTOM_TASK_PTHREAD_INC  ----- */

@@ -100,9 +100,9 @@ typedef	void * SMART_DATA;
 #define POINTER_S(x)			(GET_POINTER(x) && (((size_t) (x) & 3) == 2))	//pointer to static memory
 #define POINTER_H(x)			(GET_POINTER(x) && (((size_t) (x) & 3) == 3))	//pointer to heap
 #define GET_INTEGER(x)			((size_t) (x) >> 2)
-#define GET_POINTER(x)			((size_t) (x) & 0xFFFFFFFC)
+#define GET_POINTER(x)			(((size_t) (x) >> 2) << 2) // ((size_t) (x) & 0xFFFFFFFC)
 #define MAKE_INTEGER(x)			((void *) (((size_t)(x) << 2) | 1))
 #define	MAKE_POINTER_S(x)		((void *) (((size_t)(x)) | 2))
-/*#define	MAKE_POINTER_H(x)		((void *) (((uint32_t)(x)) | 3))*/
+#define	MAKE_POINTER_H(x)		((void *) (((size_t)(x)) | 3))
 
 #endif   /* ----- #ifndef macro_INC  ----- */
