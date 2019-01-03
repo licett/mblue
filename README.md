@@ -24,3 +24,11 @@ You will see that a simple demo is running with a 1s timers.
 
 # Learn More
 More infomation can be found at [wiki](https://github.com/licett/mblue/wiki)
+
+# License
+MBlue is under the MIT license. See the [LICENSE](https://github.com/licett/mblue/blob/master/LICENSE) file for details.
+
+# The End
+If you are interested in MBlue, don't forget to STAR it.
+MBlue's mission is MAKING EMBEDDED SIMPLE!
+Thank you for reading.
