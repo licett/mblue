@@ -30,5 +30,7 @@ MBlue is under the MIT license. See the [LICENSE](https://github.com/licett/mblu
 
 # The End
 If you are interested in MBlue, don't forget to STAR it.
+
 MBlue's mission is MAKING EMBEDDED SIMPLE!
+
 Thank you for reading.
