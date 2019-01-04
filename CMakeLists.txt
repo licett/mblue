@@ -134,7 +134,4 @@ endmacro()
 
 add_executable(mblue ${SOURCE_FILES})
 target_link_libraries(mblue pthread rt)
-print_all_variables()
-#target_compile_options(mblue
-#	PRIVATE -g
-#)
+#print_all_variables()
