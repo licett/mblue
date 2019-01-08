@@ -49,8 +49,6 @@ set(SOURCE_FILES
         middleware/common/mblue_task.h
         middleware/common/mblue_task_cfg.h
         middleware/common/mblue_task_entry.h
-        middleware/components/data_schema/data_schema.c
-        middleware/components/data_schema/data_schema.h
         middleware/components/data_schema/mblue.pb.c
         middleware/components/data_schema/mblue.pb.h
         middleware/components/data_schema/pb_schema.c
