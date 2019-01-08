@@ -17,7 +17,7 @@
  */
 #include <stdarg.h>
 #include "custom_log.h"
-#include "mblue_global_rpc_method.h"
+#include "mblue_global_ipc_method.h"
 #include "mblue_clock.h"
 #include "mblue_heap.h"
 #include "mblue_assert.h"

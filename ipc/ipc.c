@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  rpc.c
+ *       Filename:  ipc.c
  *
  *    Description:  external facade of remote call
  *
@@ -17,22 +17,22 @@
  */
 #include "mblue_stddefine.h"
 #include "task_manager.h"
-#include "rpc.h"
+#include "ipc.h"
 #include "mblue_semaphore.h"
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  rpc_init
+ *         Name:  ipc_init
  *  Description:  inject the system bus task
- *  @param rpc:rpc facade obj
+ *  @param ipc:ipc facade obj
  *  @param task:system bus task obj
  *  @return 0:success
  *		-1:failed
  * =====================================================================================
  */
-static mblue_errcode rpc_init(struct mblue_rpc *rpc, struct mblue_task *task)
+static mblue_errcode ipc_init(struct mblue_ipc *ipc, struct mblue_task *task)
 {
 	if (task) {
-		rpc->main_task = task;
+		ipc->main_task = task;
 		return MBLUE_OK;
 	}
 	return MBLUE_ERR_SYSBUS;
@@ -40,22 +40,22 @@ static mblue_errcode rpc_init(struct mblue_rpc *rpc, struct mblue_task *task)
 
 /* 
  * ===  FUNCTION  ======================================================================
- *         Name:  rpc_signal
+ *         Name:  ipc_signal
  *  Description:  send a message to systembus
- *  @param rpc:  rpc facade obj
+ *  @param ipc:  ipc facade obj
  *  @param msg:  message obj that would be sent to main task
  *  @return 0:  success
  *		-1:  failed
  * =====================================================================================
  */
-static mblue_errcode rpc_invoke(struct mblue_rpc *rpc, struct mblue_message *msg)
+static mblue_errcode ipc_invoke(struct mblue_ipc *ipc, struct mblue_message *msg)
 {
-	if (!rpc->main_task) {
+	if (!ipc->main_task) {
 		return MBLUE_ERR_SYSBUS;
 	}
 
 	struct mblue_task *system_bus, *src;
-	system_bus = rpc->main_task;
+	system_bus = ipc->main_task;
 	if ((system_bus->nproc)(system_bus, msg)) {
 		return MBLUE_ERR_SYSBUS;
 	}
@@ -69,24 +69,24 @@ static mblue_errcode rpc_invoke(struct mblue_rpc *rpc, struct mblue_message *msg
 	return MBLUE_OK;
 }
 
-static struct mblue_rpc *rpc = NULL;
-static struct mblue_rpc rpc_facade = {
-	.init = rpc_init,
-	.invoke = rpc_invoke,
+static struct mblue_ipc *ipc = NULL;
+static struct mblue_ipc ipc_facade = {
+	.init = ipc_init,
+	.invoke = ipc_invoke,
 };
 
-struct mblue_rpc *rpc_facade_create_instance(struct mblue_task *task)
+struct mblue_ipc *ipc_facade_create_instance(struct mblue_task *task)
 {
-	if (!rpc) {
-		rpc = &rpc_facade;
-		rpc->init(rpc, task);
-		return rpc;
+	if (!ipc) {
+		ipc = &ipc_facade;
+		ipc->init(ipc, task);
+		return ipc;
 	} else {
 		return NULL;
 	}
 }
 
-struct mblue_rpc *rpc_get_instance(void)
+struct mblue_ipc *ipc_get_instance(void)
 {
-	return rpc;
+	return ipc;
 }

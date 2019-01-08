@@ -1,9 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  rpc_helper.h
+ *       Filename:  ipc_helper.h
  *
- *    Description:  rpc helper
+ *    Description:  ipc helper
  *
  *        Version:  1.0
  *        Created:  2017/4/19 11:30:16
@@ -17,7 +17,7 @@
  */
 #include "mblue_stddefine.h"
 #include "task_manager.h"
-#include "rpc_helper.h"
+#include "ipc_helper.h"
 #include "system_bus.h"
 
 #define	INIT_MESSAGE_WITH(msg, task, s, r, d, c, in, e)			\
@@ -56,7 +56,7 @@ static struct mblue_message *init_message(
 	if (type == SYNC_CALL || type == ASYNC_CALL) {
 		msg->ref++;
 		if (type == SYNC_CALL) {
-			msg->rpc_return = out;
+			msg->ipc_return = out;
 		} else {
 			msg->pn = pn;
 		}
@@ -72,12 +72,12 @@ mblue_errcode mblue_message_post(
 	void *in, 
 	void **out, void *extra, struct pending_notifier *pn)
 {
-	struct mblue_rpc *r;
+	struct mblue_ipc *r;
 	struct mblue_message *msg;
 	struct system_bus *sb;
 
 	sb = get_system_bus_instance();
-	r = rpc_get_instance();
+	r = ipc_get_instance();
 	/*msg = init_message(task, seq, type, major, minor, 
 				sb->get_segment(sb, MBLUE_BUS), data, extra);*/
 	msg = init_message(task, seq, type, major, minor, 

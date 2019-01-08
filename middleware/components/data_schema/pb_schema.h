@@ -24,7 +24,7 @@
 #include "mblue_errcode.h"
 #include "mblue_macro.h"
 
-#define	MAX_RPC_METHOD_NAME_LENGTH		31			/*  */
+#define	MAX_IPC_METHOD_NAME_LENGTH		31			/*  */
 
 #define	INIT_PB_DECODE_DATA_STRUCT(type, byte_p, byte_n)				\
 	INIT_PB_DATA_STRUCT(type, 0, 1, byte_p, byte_n)
@@ -65,7 +65,7 @@ struct pb_layout_parser {
 };
 void *mblue_serialize_struct_with_layout(void *src, const pb_field_t fields[]);
 void *mblue_serialize_mono_buffer(const void *buffer, size_t len);
-void *mblue_serialize_rpc(const char *method, uint16_t index, void *src);
+void *mblue_serialize_ipc(const char *method, uint16_t index, void *src);
 bool __mblue_pb_write_bytes(pb_ostream_t *stream, const pb_field_t *field, void * const *arg);
 bool __mblue_pb_read_bytes(pb_istream_t *stream, const pb_field_t *field, void **arg);
 bool __mblue_pb_get_bytes_pointer(pb_istream_t *stream, const pb_field_t *field, void **arg);

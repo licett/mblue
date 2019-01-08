@@ -1,9 +1,9 @@
 /*
  * =====================================================================================
  *
- *       Filename:  rpc_helper.h
+ *       Filename:  ipc_helper.h
  *
- *    Description:  rpc helper
+ *    Description:  ipc helper
  *
  *        Version:  1.0
  *        Created:  2017/4/19 11:30:16
@@ -15,13 +15,13 @@
  *
  * =====================================================================================
  */
-#ifndef  rpc_helper_INC
-#define  rpc_helper_INC
+#ifndef  ipc_helper_INC
+#define  ipc_helper_INC
 /*#include "mblue_errcode.h"*/
 #include "mblue_stddefine.h"
 #include "mblue_message.h"
 #include "mblue_stdtask.h"
-#include "rpc.h"
+#include "ipc.h"
 #include "data_schema.h"
 #include "mblue_segment.h"
 
@@ -39,7 +39,7 @@
 		mblue_message_get_sequence(), SIGNAL,			\
 		ma, mi, data, NULL, NULL, NULL)
 
-#define	rpc_return(major, seq, data)					\
+#define	ipc_return(major, seq, data)					\
 	mblue_message_post(get_current_context(),			\
 		seq, CALL_RETURN,					\
 		major, 0, data, NULL, NULL, NULL)
@@ -59,4 +59,4 @@ mblue_errcode target_signal(struct mblue_task *source, struct mblue_task *target
 	uint16_t major, uint16_t minor, 
 	void *dest,
 	void *data, void *extra);
-#endif   /* ----- #ifndef rpc_helper_INC  ----- */
+#endif   /* ----- #ifndef ipc_helper_INC  ----- */

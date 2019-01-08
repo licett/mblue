@@ -47,7 +47,7 @@ struct mblue_message {
 
 	union {
 		void *extra;			//extra infomation for other bus method(signal/subscribe)
-		void **rpc_return;		//return payload for sync remote call
+		void **ipc_return;		//return payload for sync remote call
 		struct pending_notifier *pn;    //notifier for aysnc remote call
 	};
 	struct list_head list;

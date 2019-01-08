@@ -19,7 +19,7 @@
 #ifndef  logger_INC
 #define  logger_INC
 #include "log.h"
-#include "mblue_global_rpc_method.h"
+#include "mblue_global_ipc_method.h"
 #define LOGGER(level, fmt, ...)								\
 				do {							\
 					log_service_write(level, __FILE__, fmt, ##__VA_ARGS__);	\

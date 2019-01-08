@@ -22,7 +22,7 @@
 #include "mblue_message.h"
 #include "mblue_heap.h"
 #include "mblue_logger.h"
-#include "mblue_global_rpc_method.h"
+#include "mblue_global_ipc_method.h"
 #include "event_helper.h"
 
 #include "simple_scenario.h"

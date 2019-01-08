@@ -24,7 +24,7 @@
 #include "mblue_heap.h"
 #include "task_manager.h"
 #include "data_schema.h"
-#include "rpc_helper.h"
+#include "ipc_helper.h"
 #include "mblue_assert.h"
 
 #include "pb_schema.h"
@@ -88,14 +88,14 @@ static mblue_errcode default_signal_handler(struct mblue_segment *ms, void *data
 	return rc;
 }
 
-static mblue_errcode default_rpc_handler(struct mblue_segment *ms, void *data)
+static mblue_errcode default_ipc_handler(struct mblue_segment *ms, void *data)
 {
-	void *rpc_func;
+	void *ipc_func;
 	mblue_errcode rc;
 	SMART_DATA ret;
 	uint16_t index;
 	struct mblue_message *msg;
-	struct _dl_rpc_header rpc_header;
+	struct _dl_rpc_header ipc_header;
 	pb_istream_t stream;
 	mblue_pb_parser_func_t data_parser;
 
@@ -107,21 +107,21 @@ static mblue_errcode default_rpc_handler(struct mblue_segment *ms, void *data)
 	__link_msg(ms, msg);
 	if (PB_PAYLOAD(msg->smart_payload)) {
 		stream = pb_istream_from_buffer(msg->smart_payload, SIZE_MAX);
-		if (!pb_decode_delimited(&stream, dl_rpc_header_fields, &rpc_header)) {
+		if (!pb_decode_delimited(&stream, dl_rpc_header_fields, &ipc_header)) {
 			goto exited;
 		}
-		index = rpc_header.layout_index;
+		index = ipc_header.layout_index;
 	}
 
-	rpc_func = find_rpc_handler_from_service(ms, msg);
-	if (rpc_func) {
+	ipc_func = find_ipc_handler_from_service(ms, msg);
+	if (ipc_func) {
 		/*ms->pending_caller = msg;*/
 		_ASSERT(index != PB_MAX);
 		data_parser = mblue_pb_data_parser_get(index);
-		ret = data_parser(&stream, rpc_func);
+		ret = data_parser(&stream, ipc_func);
 		if (!(INTEGER_P(ret) && 
 			((mblue_errcode)GET_INTEGER(ret)) == MBLUE_REMOTE_CALL_PENDING)) {
-			rc = rpc_return(GET_MAJOR(msg), msg->seq, ret);
+			rc = ipc_return(GET_MAJOR(msg), msg->seq, ret);
 		}
 	}
 
@@ -139,15 +139,15 @@ static void default_launch(struct mblue_segment *ms)
 	//_ASSERT(ms->major);
 }
 
-void *find_rpc_handler_from_service(struct mblue_segment *ms, struct mblue_message *msg)
+void *find_ipc_handler_from_service(struct mblue_segment *ms, struct mblue_message *msg)
 {
 	uint16_t minor;
-	struct handler_item *rpc_array, *p;
+	struct handler_item *ipc_array, *p;
 
 	minor = GET_MINOR(msg);	
-	rpc_array = ms->items_array[SYNC_CALL];
+	ipc_array = ms->items_array[SYNC_CALL];
 
-	for (p = rpc_array; p != NULL && p->id != END_ITEM_ID; p++) {
+	for (p = ipc_array; p != NULL && p->id != END_ITEM_ID; p++) {
 		if (p->id == minor) {
 			return p->handler;
 		}
@@ -165,7 +165,7 @@ void init_segment(struct mblue_segment *ms)
 
 	ms->magic			= MBLUE_SEGMENT_MAGIC;
 	ms->handler_array[SIGNAL]	= default_signal_handler;
-	ms->handler_array[SYNC_CALL]	= default_rpc_handler;
-	ms->handler_array[ASYNC_CALL]	= default_rpc_handler;
+	ms->handler_array[SYNC_CALL]	= default_ipc_handler;
+	ms->handler_array[ASYNC_CALL]	= default_ipc_handler;
 	ms->on_launch			= default_launch;
 }

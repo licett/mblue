@@ -11,7 +11,7 @@
  *	1.receive all messages from different segments and distribute these messages
  *	to segments that need these messages(a typical sub/pub).
  *
- *	2.provide rpc interface to other threads.
+ *	2.provide ipc interface to other threads.
  *
  *	TODO
  *	3.System bus is also the factory of the whole system and it manages the 
@@ -183,7 +183,7 @@ exit_point:
  *  Description:  call a remote method 
  *  @param bus:object of system bus
  *  @param type:call type
- *  @param callback:function will be called within bus context when rpc is done 
+ *  @param callback:function will be called within bus context when ipc is done 
  *	NOTE that you should not do time-consuming operation in callback
  *  @return 0:success
  *	   -1:fail
@@ -230,7 +230,7 @@ static mblue_errcode bus_call(struct system_bus *bus, struct mblue_message *msg,
                 call->call_type = type;
 		switch(type) {
 		case SYNC_CALL:
-			msg->rpc_return = (void **)union_info;
+			msg->ipc_return = (void **)union_info;
 			break;
 		case ASYNC_CALL:
 			q = (struct pending_notifier *)union_info;
@@ -314,7 +314,7 @@ static mblue_errcode bus_call_return(struct system_bus *bus, struct mblue_messag
 			if (!task) {
 				break;
 			}
-			p = (uint8_t **)smsg->rpc_return;
+			p = (uint8_t **)smsg->ipc_return;
 			q = (uint8_t *)dmsg->smart_payload;
 			*p = q;
 			if (task->tpost) {

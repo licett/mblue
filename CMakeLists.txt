@@ -15,11 +15,11 @@ include_directories(middleware/components/persistence_manager)
 include_directories(middleware/components/power)
 include_directories(middleware/components/protocal_buffer)
 include_directories(middleware/components/ring_buffer)
-include_directories(middleware/components/rpc)
 include_directories(middleware/components/segment)
 include_directories(middleware/components/state_machine)
 include_directories(middleware/components/system_bus)
 include_directories(middleware/components/task_manager)
+include_directories(ipc)
 include_directories(pal/clock)
 include_directories(pal/heap)
 include_directories(pal/int)
@@ -76,18 +76,18 @@ set(SOURCE_FILES
         middleware/components/protocal_buffer/pb_encode.h
         middleware/components/ring_buffer/mblue_fifo.c
         middleware/components/ring_buffer/mblue_fifo.h
-        middleware/components/rpc/mblue_global_rpc_method.c
-        middleware/components/rpc/mblue_global_rpc_method.h
-        middleware/components/rpc/rpc.c
-        middleware/components/rpc/rpc.h
-        middleware/components/rpc/rpc_helper.c
-        middleware/components/rpc/rpc_helper.h
         middleware/components/segment/mblue_segment.c
         middleware/components/segment/mblue_segment.h
         middleware/components/system_bus/system_bus.c
         middleware/components/system_bus/system_bus.h
         middleware/components/task_manager/task_manager.c
         middleware/components/task_manager/task_manager.h
+        ipc/mblue_global_ipc_method.c
+        ipc/mblue_global_ipc_method.h
+        ipc/ipc.c
+        ipc/ipc.h
+        ipc/ipc_helper.c
+        ipc/ipc_helper.h
         pal/clock/custom_clock.h
         pal/clock/mblue_clock.c
         pal/clock/mblue_clock.h

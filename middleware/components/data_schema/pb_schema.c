@@ -50,7 +50,7 @@ static bool drain_input_buffer(pb_istream_t *stream, size_t count)
 	NULL : failed
  * =====================================================================================
  */
-void *mblue_serialize_rpc(const char *method, uint16_t index, void *src)
+void *mblue_serialize_ipc(const char *method, uint16_t index, void *src)
 {
 	int res;
 	void *buffer;
@@ -60,7 +60,7 @@ void *mblue_serialize_rpc(const char *method, uint16_t index, void *src)
 	const pb_field_t *data_schema;
 
 	_ASSERT(method != NULL);
-	_ASSERT(strlen(method) <= MAX_RPC_METHOD_NAME_LENGTH);
+	_ASSERT(strlen(method) <= MAX_IPC_METHOD_NAME_LENGTH);
 	_ASSERT(index < PB_MAX);
 
 	// 1.check
@@ -69,7 +69,7 @@ void *mblue_serialize_rpc(const char *method, uint16_t index, void *src)
 	data_size = 0;
 	header_size = 0;
 	data_schema = mblue_pb_data_layout_get(index);
-	strncpy(header.method_name, method, MAX_RPC_METHOD_NAME_LENGTH);
+	strncpy(header.method_name, method, MAX_IPC_METHOD_NAME_LENGTH);
 	header.layout_index = index;
 	
 	// 2.get buffer size

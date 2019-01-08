@@ -1,7 +1,7 @@
 /*
  * =====================================================================================
  *
- *       Filename:  rpc.h
+ *       Filename:  ipc.h
  *
  *    Description:  external facade of remote call
  *
@@ -15,16 +15,16 @@
  *
  * =====================================================================================
  */
-#ifndef  rpc_INC
-#define  rpc_INC
+#ifndef  IPC_INC
+#define  IPC_INC
 #include "mblue_errcode.h"
-struct mblue_rpc {
+struct mblue_ipc {
 	struct mblue_task *main_task;
 
-	mblue_errcode (*init)(struct mblue_rpc *rpc, struct mblue_task *task);
-	mblue_errcode (*invoke)(struct mblue_rpc *rpc, struct mblue_message *msg);
+	mblue_errcode (*init)(struct mblue_ipc *ipc, struct mblue_task *task);
+	mblue_errcode (*invoke)(struct mblue_ipc *ipc, struct mblue_message *msg);
 };
 
-struct mblue_rpc *rpc_facade_create_instance(struct mblue_task *task);
-struct mblue_rpc *rpc_get_instance(void);
-#endif   /* ----- #ifndef rpc_INC  ----- */
+struct mblue_ipc *ipc_facade_create_instance(struct mblue_task *task);
+struct mblue_ipc *ipc_get_instance(void);
+#endif   /* ----- #ifndef ipc_INC  ----- */

@@ -62,5 +62,5 @@ struct mblue_segment {
 	struct list_head task;
 };
 void init_segment(struct mblue_segment *ms);
-void *find_rpc_handler_from_service(struct mblue_segment *ms, struct mblue_message *msg);
+void *find_ipc_handler_from_service(struct mblue_segment *ms, struct mblue_message *msg);
 #endif   /* ----- #ifndef mblue_segment_INC  ----- */

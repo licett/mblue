@@ -4,7 +4,7 @@
 #include "mblue_task.h"
 #include "mblue_message.h"
 #include "mblue_heap.h"
-#include "rpc_helper.h"
+#include "ipc_helper.h"
 #include "event_helper.h"
 #include "log_service.h"
 #include "log.h"
@@ -47,7 +47,7 @@ static SMART_DATA _hex_print(uint32_t tag, uint8_t *buffer, uint32_t len)
 	return MAKE_INTEGER(MBLUE_OK);
 }
 
-static struct handler_item rpc_items[] = {
+static struct handler_item ipc_items[] = {
 	HANDLER_ITEM(MBLUE_LOG_SERVICE_LOG, _write_log),
 	HANDLER_ITEM(MBLUE_LOG_SERVICE_SET_TYPE, _set_log_type),
 	HANDLER_ITEM(MBLUE_LOG_SERVICE_SET_LEVEL, _set_log_level),
@@ -66,8 +66,8 @@ static int service_init(struct mblue_log_service *s)
 
 	// 2.setup basic info and handler
 	ms->major = MBLUE_LOG_SERVICE;
-	ms->items_array[SYNC_CALL]	= rpc_items;
-	ms->items_array[ASYNC_CALL]	= rpc_items;
+	ms->items_array[SYNC_CALL]	= ipc_items;
+	ms->items_array[ASYNC_CALL]	= ipc_items;
 	ms->on_launch			= service_launch;
 
 	return 0;

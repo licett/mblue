@@ -19,7 +19,7 @@
 #include "mblue_stddefine.h"
 #include "mblue_message.h"
 #include "mblue_segment.h"
-#include "rpc.h"
+#include "ipc.h"
 #include "system_bus.h"
 #include "system_bus_service.h"
 
@@ -71,11 +71,11 @@ static mblue_errcode handle_call_return(struct mblue_segment *ms, void *data)
 static void service_launch(struct mblue_segment *ms)
 {
 	struct mblue_task *ts;
-	struct mblue_rpc *rpc;
+	struct mblue_ipc *ipc;
 
 	ts = ms->get_context(ms);
-	rpc = rpc_facade_create_instance(ts);
-	_ASSERT(rpc);
+	ipc = ipc_facade_create_instance(ts);
+	_ASSERT(ipc);
 }
 
 static void system_bus_service_init(struct system_bus_service *service)

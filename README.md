@@ -1,6 +1,6 @@
 # MBlue
 MBlue is a light-weight embedded framework. 
-It is designed to help embedde developers to write portable bussiness code and reduce complexity of their projecs. 
+It is designed to help embedded developers to write portable bussiness code and reduce complexity of their projecs. 
 
 # Features
 * Portable lowlevel operations(including threads, memory, semaphore and etc).
@@ -8,7 +8,7 @@ It is designed to help embedde developers to write portable bussiness code and r
 * IPC.
 
 # Quick Start
-The quickest way to get started with Mblue is to clone the project and run the demo in a Linux.
+The quickest way to get started with Mblue is to clone the project and run the demo on a Linux.
 
 Install development tools:
 ```bash
