@@ -22,7 +22,6 @@
 #include "mblue_message.h"
 #include "mblue_stdtask.h"
 #include "ipc.h"
-#include "data_schema.h"
 #include "mblue_segment.h"
 
 //NOTE: You should only use these macros in task context.

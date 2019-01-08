@@ -23,7 +23,6 @@
 #include "mblue_list.h"
 #include "event_helper.h"
 #include "mblue_message.h"
-#include "data_schema.h"
 #include "ipc_helper.h"
 
 #define	INIT_EVENT_ELEMENT_WITH(ele, y, m, p, s, d, t, st, aw, ca, fi)		\

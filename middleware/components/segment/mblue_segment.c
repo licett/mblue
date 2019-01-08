@@ -23,7 +23,6 @@
 #include "mblue_segment.h"
 #include "mblue_heap.h"
 #include "task_manager.h"
-#include "data_schema.h"
 #include "ipc_helper.h"
 #include "mblue_assert.h"
 
