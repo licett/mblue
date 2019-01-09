@@ -72,10 +72,16 @@ static void service_launch(struct mblue_segment *ms)
 {
 	struct mblue_task *ts;
 	struct mblue_ipc *ipc;
+	struct system_bus *sb;
+	struct system_bus_service *service;
 
 	ts = ms->get_context(ms);
 	ipc = ipc_facade_create_instance(ts);
 	_ASSERT(ipc);
+
+	service = (struct system_bus_service *)ms;
+	sb = service->sb;
+	sb->contex_notify(sb);
 }
 
 static void system_bus_service_init(struct system_bus_service *service)

@@ -56,6 +56,7 @@ static mblue_errcode bus_init(struct system_bus *bus)
 		INIT_LIST_HEAD(&(bus->_segment_node[i].publish_list));
 		INIT_LIST_HEAD(&(bus->_segment_node[i].call_list));
 	}
+	mblue_semaphore_construct(&bus->init_lock);
 	return MBLUE_OK;
 }
 
@@ -65,16 +66,45 @@ static mblue_errcode bus_init(struct system_bus *bus)
  *  description:  register current segment to global segments list
  *  @param bus:object of system bus
  *  @param ms:object of current segment
- *  @return 0:success
- *	   -1:fail
  * =====================================================================================
  */
 static void bus_register(struct system_bus *bus, struct mblue_segment *ms)
 {
+	mblue_errcode rc;
+	struct mblue_semaphore *init;
+
 	_ASSERT(ms);
 	_ASSERT(ms->magic == MBLUE_SEGMENT_MAGIC);
 
+	init = &bus->init_lock;
+	if (ms->major != MBLUE_BUS) {
+		rc = init->pend(init, SEMAPHORE_PEND_FOREVER);
+		_ASSERT(!rc);
+	}
 	bus->_segment_node[ms->major].ms = ms;
+}
+
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  bus_init_notify
+ *  Description:  give a notification to other segments that bus is ready
+ *  @return 0:	success
+ *     others:	fail
+ * =====================================================================================
+ */
+static mblue_errcode bus_contex_notify(struct system_bus *bus)
+{
+	size_t i;
+	mblue_errcode rc;
+	struct mblue_semaphore *init;
+
+	init = &bus->init_lock;
+	for (i = 0; i < SEGMENT_MAJOR_MAX; i++) {
+		rc |= init->post(init);		
+		_ASSERT(!rc);
+	}
+
+	return rc;
 }
 
 /* 
@@ -346,6 +376,7 @@ exit_point:
 
 static struct system_bus _system_bus = {
 	.init = bus_init,
+	.contex_notify = bus_contex_notify,
 	.get_segment = bus_get_segment,
 	.regist = bus_register,
 	.subscribe = bus_subscribe,

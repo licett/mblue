@@ -58,8 +58,10 @@ struct segment_node {
 
 struct system_bus {
 	struct segment_node _segment_node[SEGMENT_MAJOR_MAX];
+	struct mblue_semaphore init_lock;
 
 	mblue_errcode (*init)(struct system_bus *bus);
+	mblue_errcode (*contex_notify)(struct system_bus *bus);
 	struct mblue_segment *(*get_segment)(struct system_bus *bus, uint16_t major);
 	void (*regist)(struct system_bus *bus, struct mblue_segment *ms);
 	mblue_errcode (*subscribe)(struct system_bus *bus, struct mblue_segment *ms, uint16_t major);

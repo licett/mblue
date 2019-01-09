@@ -50,23 +50,55 @@ static mblue_errcode ipc_init(struct mblue_ipc *ipc, struct mblue_task *task)
  */
 static mblue_errcode ipc_invoke(struct mblue_ipc *ipc, struct mblue_message *msg)
 {
-	if (!ipc->main_task) {
-		return MBLUE_ERR_SYSBUS;
+	mblue_errcode rc;
+	struct mblue_segment *ms, *tmp;
+	struct list_head *node, seg;
+	struct mblue_task *dst, *src;
+
+	rc = MBLUE_OK;
+
+	ms = msg->dst;
+	if (!ms) {
+		dst = ipc->main_task;
+
+		list_for_each(node, &(dst->segments)) {
+			tmp = list_entry(node, struct mblue_segment, task);
+			if (!tmp 
+#ifdef DEBUG
+				|| (tmp->magic != MBLUE_SEGMENT_MAGIC)
+#endif
+				) {
+				LOGGER(LOG_ERROR," found err in segment list\n");
+				_ASSERT(FALSE);
+				rc = MBLUE_ERR_CORRUPT_MEM;
+				goto ipc_exit;
+
+			} else if (tmp->major == MBLUE_BUS) {
+				msg->dst = tmp;
+				break;
+			}
+		}
+		_ASSERT(msg->dst);
+	} else {
+		dst = ms->context;
 	}
 
-	struct mblue_task *system_bus, *src;
-	system_bus = ipc->main_task;
-	if ((system_bus->nproc)(system_bus, msg)) {
-		return MBLUE_ERR_SYSBUS;
+	if ((dst->nproc)(dst, msg)) {
+		rc =  MBLUE_ERR_SYSBUS;
+		goto ipc_exit;
 	}
+
 	if (GET_TYPE(msg) == SYNC_CALL) {
 		src = (struct mblue_task *)msg->src;
 		if (!src) {
-			return MBLUE_ERR_SYSBUS;
+			rc = MBLUE_ERR_SYSBUS;
+			goto ipc_exit;
 		}
-                return (src->tpend)(src);
+                rc = (src->tpend)(src);
 	}
-	return MBLUE_OK;
+
+ipc_exit:
+	return rc;
 }
 
 static struct mblue_ipc *ipc = NULL;
