@@ -36,7 +36,8 @@ struct mblue_message_container {
  *  Description:  bind current segment to task
  *			1.bind current segment to task
  *			2.register current segment to task's local segment list
- *			3.launch the segment
+ *			3.register current segment to bus's segment list
+ *			4.launch the segment
  * =====================================================================================
  */
 void segment_bind(struct mblue_task *task, struct mblue_segment *ms)

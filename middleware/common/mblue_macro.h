@@ -16,8 +16,8 @@
  * =====================================================================================
  */
 
-#ifndef  macro_INC
-#define  macro_INC
+#ifndef  MACRO_INC
+#define  MACRO_INC
 #define	INLINE	inline							/*  */
 #define	CONCAT2(a,b)		a##b				/*  */
 #define	CONCAT2E(a,b)		CONCAT2(a,b)			/*  */
@@ -105,4 +105,4 @@ typedef	void * SMART_DATA;
 #define	MAKE_POINTER_S(x)		((void *) (((size_t)(x)) | 2))
 #define	MAKE_POINTER_H(x)		((void *) (((size_t)(x)) | 3))
 
-#endif   /* ----- #ifndef macro_INC  ----- */
+#endif   /* ----- #ifndef MACRO_INC  ----- */

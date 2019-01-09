@@ -23,7 +23,7 @@ $ ./mblue
 You will see that a simple demo is running with a timer fired once per second.
 
 # Learn More
-More infomation can be found at [wiki](https://github.com/licett/mblue/wiki)
+More infomation can be found at [wiki](https://github.com/licett/mblue/wiki).
 
 # License
 MBlue is under the MIT license. See the [LICENSE](https://github.com/licett/mblue/blob/master/LICENSE) file for details.
