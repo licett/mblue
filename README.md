@@ -16,11 +16,11 @@ $ sudo apt install build-essential cmake
 ```
 Compile MBlue with cmake(make sure you are in the root directory of MBlue):
 ```bash
-$ cmake .
+$ mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=../linux_m32.cmake ..
 $ make
 $ ./mblue
 ```
-You will see that a simple demo is running with a 1s timers.
+You will see that a simple demo is running with a timer fired once per second.
 
 # Learn More
 More infomation can be found at [wiki](https://github.com/licett/mblue/wiki)

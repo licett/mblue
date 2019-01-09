@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 project(mblue C)
 
-set(CMAKE_C_STANDARD 11)
-
 include_directories(app/scenario)
 include_directories(middleware/common)
 include_directories(middleware/components/data_schema)
