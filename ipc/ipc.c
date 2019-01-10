@@ -16,9 +16,14 @@
  * =====================================================================================
  */
 #include "mblue_stddefine.h"
+#include "mblue_list.h"
+#include "mblue_assert.h"
+#include "mblue_segment.h"
 #include "task_manager.h"
 #include "ipc.h"
 #include "mblue_semaphore.h"
+#include "mblue_logger.h"
+
 /* 
  * ===  FUNCTION  ======================================================================
  *         Name:  ipc_init

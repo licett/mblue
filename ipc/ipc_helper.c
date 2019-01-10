@@ -74,15 +74,16 @@ mblue_errcode __send_message_to_destiny(
 	void **out, 
 	void *extra, struct pending_notifier *pn)
 {
-	struct mblue_ipc *r;
+	struct mblue_ipc *ipc;
 	struct mblue_message *msg;
 
+	ipc = ipc_get_instance();
 	msg = init_message(src, seq, type, major, minor, 
 				dst, in, out, extra, pn);
 	if (!msg) {
 		return MBLUE_ERR_NOMEM;
 	}
-	return r->invoke(r, msg);
+	return ipc->invoke(ipc, msg);
 }
 
 mblue_errcode mblue_message_post(
@@ -92,11 +93,7 @@ mblue_errcode mblue_message_post(
 	void *in, 
 	void **out, void *extra, struct pending_notifier *pn)
 {
-	struct mblue_ipc *r;
-	struct mblue_message *msg;
-	struct system_bus *sb;
-
-	__send_message_to_destiny(task, seq, type, major, minor, 
+	return __send_message_to_destiny(task, seq, type, major, minor, 
 					NULL, in, out, extra, pn);
 }
 
@@ -151,25 +148,12 @@ mblue_errcode target_signal(struct mblue_task *source, struct mblue_task *target
 	void *dest,
 	void *data, void *extra)
 {
-	struct mblue_message *msg;
-
-	return __send_message_to_destiny(task, 
+	return __send_message_to_destiny(source, 
 				mblue_message_get_sequence(), 
 				SIGNAL, 
 				major, minor, 
 				dest,
 				data, NULL, extra, NULL);
-	/*msg = init_message(source, 
-		mblue_message_get_sequence(), 
-		SIGNAL, 
-		major, minor, 
-		dest,
-		data, NULL, extra, NULL);
-	if (!msg) {
-		return MBLUE_ERR_NOMEM;
-	}
-	msg->ref++;
-	return (target->nproc)(target, msg);*/
 }
 
 /*int message_register(struct mblue_task *task, uint16_t major)
