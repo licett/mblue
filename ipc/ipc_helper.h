@@ -26,35 +26,38 @@
 
 //NOTE: You should only use these macros in task context.
 #define	local_signal(src, mi, dest, data)				\
-	target_signal(src, get_current_context(), 0, mi, dest, data, NULL)
+	target_signal(src, 0, mi, dest, data, NULL)
 
 #define	broadcast_signal_with_context(c, ma, mi, data)			\
-	mblue_message_post(c,						\
+	send_message(c,						\
 		mblue_message_get_sequence(), SIGNAL,			\
-		ma, mi, data, NULL, NULL, NULL)
+		ma, mi, NULL, data, NULL, NULL, NULL)
 
 #define	broadcast_signal(ma, mi, data)					\
-	mblue_message_post(get_current_context(),			\
+	send_message(get_current_context(),			\
 		mblue_message_get_sequence(), SIGNAL,			\
-		ma, mi, data, NULL, NULL, NULL)
+		ma, mi, NULL, data, NULL, NULL, NULL)
 
 #define	ipc_return(major, seq, data)					\
-	mblue_message_post(get_current_context(),			\
+	send_message(get_current_context(),			\
 		seq, CALL_RETURN,					\
-		major, 0, data, NULL, NULL, NULL)
+		major, 0, NULL, data, NULL, NULL, NULL)
 
-mblue_errcode mblue_subscribe(struct mblue_segment *ms, uint16_t major);
-mblue_errcode mblue_message_post(
-	struct mblue_task *task, uint16_t seq, uint8_t type,
+mblue_errcode send_message(
+	struct mblue_task *src, 
+	uint16_t seq, uint8_t type,
 	uint16_t major, uint16_t minor, 
-	void *in, void **out, 
+	void *dst,
+	void *in, 
+	void **out, 
 	void *extra, struct pending_notifier *pn);
+mblue_errcode mblue_subscribe(struct mblue_segment *ms, uint16_t major);
 void *mblue_remote_call(uint16_t major, uint16_t minor, void *in);
 mblue_errcode mblue_remote_call_async(uint16_t major, uint16_t minor, 
 	void *in,
 	void (*notify)(void *, void *user_data),
 	void *data);
-mblue_errcode target_signal(struct mblue_task *source, struct mblue_task *target,
+mblue_errcode target_signal(struct mblue_task *source,
 	uint16_t major, uint16_t minor, 
 	void *dest,
 	void *data, void *extra);

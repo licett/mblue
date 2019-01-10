@@ -134,7 +134,6 @@ void default_timer_event(void *param)
 	ms = q->context;
 	target_signal(
 		(struct mblue_task *)MESSAGE_SOURCE_TIMER,
-		ms->get_context(ms),
 		MBLUE_SYSTEM, MBLUE_TIMER_WAKEUP, 
 		ms, MAKE_POINTER_S(param), NULL);
 }

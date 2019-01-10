@@ -264,11 +264,11 @@ static mblue_errcode bus_call(struct system_bus *bus, struct mblue_message *msg,
 			break;
 		case ASYNC_CALL:
 			q = (struct pending_notifier *)union_info;
-			p = (struct pending_notifier *)mblue_malloc(sizeof(struct pending_notifier));
+			/*p = (struct pending_notifier *)mblue_malloc(sizeof(struct pending_notifier));
 			if (p) {
 				memcpy(p, q, sizeof(struct pending_notifier));
-			}
-			call->notifier = p;
+			}*/
+			call->notifier = q;
 			break;
 		default:
 			_ASSERT(FALSE);

@@ -19,6 +19,7 @@
 #include "task_manager.h"
 #include "ipc_helper.h"
 #include "system_bus.h"
+#include "mblue_heap.h"
 
 #define	INIT_MESSAGE_WITH(msg, task, s, r, d, c, in, e)			\
 		do {							\
@@ -65,7 +66,7 @@ fail:
 	return msg;
 }
 
-mblue_errcode __send_message_to_destiny(
+mblue_errcode send_message(
 	struct mblue_task *src, 
 	uint16_t seq, uint8_t type,
 	uint16_t major, uint16_t minor, 
@@ -85,7 +86,7 @@ mblue_errcode __send_message_to_destiny(
 	}
 	return ipc->invoke(ipc, msg);
 }
-
+/*
 mblue_errcode mblue_message_post(
 	struct mblue_task *task, 
 	uint16_t seq, uint8_t type,
@@ -93,16 +94,16 @@ mblue_errcode mblue_message_post(
 	void *in, 
 	void **out, void *extra, struct pending_notifier *pn)
 {
-	return __send_message_to_destiny(task, seq, type, major, minor, 
+	return send_message(task, seq, type, major, minor, 
 					NULL, in, out, extra, pn);
 }
-
+*/
 mblue_errcode mblue_subscribe(struct mblue_segment *ms, uint16_t major)
 {
-	return mblue_message_post(
+	return send_message(
 		ms->get_context(ms), 
 		mblue_message_get_sequence(), 
-		SUBSCRIBE, major, 0, NULL, NULL, ms, NULL);
+		SUBSCRIBE, major, 0, NULL, NULL, NULL, ms, NULL);
 }
 
 void *mblue_remote_call(uint16_t major, uint16_t minor, void *in)
@@ -110,11 +111,11 @@ void *mblue_remote_call(uint16_t major, uint16_t minor, void *in)
 	mblue_errcode rc;
 	void *out;
 
-	rc = mblue_message_post(
+	rc = send_message(
 		get_current_context(),			
 		mblue_message_get_sequence(), 
 		SYNC_CALL,		
-		major, minor, 
+		major, minor, NULL,
 		in, &out, 
 		NULL, NULL);
 	_ASSERT(rc == MBLUE_OK);
@@ -128,43 +129,36 @@ mblue_errcode mblue_remote_call_async(uint16_t major, uint16_t minor,
 	void *data)
 {
 	mblue_errcode rc;
-	struct pending_notifier pn = {notify, data};
+	struct pending_notifier *pn;
 
-	rc = mblue_message_post(
-		get_current_context(),			
-		mblue_message_get_sequence(), 
-		ASYNC_CALL,		
-		major, minor, 
-		in, 
-		NULL, NULL, &pn);
-	_ASSERT(rc == MBLUE_OK);
+	rc = MBLUE_ERR_NOMEM;
+	pn = mblue_malloc(sizeof(struct pending_notifier));
+	if (pn) {
+		pn->notify = notify;
+		pn->user_data = data;
+
+		rc = send_message(
+			get_current_context(),			
+			mblue_message_get_sequence(), 
+			ASYNC_CALL,		
+			major, minor, NULL, 
+			in, NULL, NULL, pn);
+		_ASSERT(rc == MBLUE_OK);
+	}
 
 	return rc;
 }
 
 
-mblue_errcode target_signal(struct mblue_task *source, struct mblue_task *target,
+mblue_errcode target_signal(struct mblue_task *source,
 	uint16_t major, uint16_t minor, 
 	void *dest,
 	void *data, void *extra)
 {
-	return __send_message_to_destiny(source, 
+	return send_message(source, 
 				mblue_message_get_sequence(), 
 				SIGNAL, 
 				major, minor, 
 				dest,
 				data, NULL, extra, NULL);
 }
-
-/*int message_register(struct mblue_task *task, uint16_t major)
-{
-	return system_message_post(task, mblue_message_get_sequence(), 
-					REGISTER, major, 0, NULL, NULL);
-}*/
-
-/*int uart_write(struct mblue_task *task, uint8_t *data, int len, 
-	int (*notify)(struct message *msg))
-{
-	return system_message_post(task, message_get_sequence(), SIGNAL, 
-		DEVICE, UART, MBLUE_DEVICE_UART_WRITE, data, (void *)notify);
-}*/

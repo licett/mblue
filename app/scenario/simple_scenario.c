@@ -41,7 +41,8 @@ static mblue_errcode delayed_work(struct event_queue_element *e, void *data)
 	/*if (count++ < 10) {
 		return MBLUE_OK;
 	}*/
-	return MBLUE_ELEMENT_EXIT;
+	return MBLUE_OK;
+	//return MBLUE_ELEMENT_EXIT;
 }
 
 static mblue_errcode timer_wakeup(void *obj, void *data)
@@ -70,9 +71,7 @@ static void scenario_launch(struct mblue_segment *ms)
 {
 	delayed_event_queue.init(&delayed_event_queue, ms);
 	delayed_event_queue.__timer_function = default_timer_event;
-	schedule_default_event(&delayed_event_queue, 1000, delayed_work);
-
-	LOGGER(LOG_INFO, "scenario_launch! \n");
+	schedule_default_event(&delayed_event_queue, 10, delayed_work);
 }
 
 //@override
