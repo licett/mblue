@@ -31,7 +31,13 @@
 #define	GET_TYPE(msg)			((msg->code) >> 28)		/*  */
 #define	GET_MAJOR(msg)			(((msg->code) >> 16) & 0xFFF)		/*  */
 #define	GET_MINOR(msg)			((msg->code) & 0xFFFF)	/*  */
-
+/*
+struct mblue_message {
+	char *action;			//sig.uart
+	uint16_t seq;			//sequence id of mblue_message
+	uint16_t ref;			//how many modules are using this mblue_message?
+}
+*/
 struct mblue_message {
 #ifdef DEBUG
 	uint32_t magic;
