@@ -8,7 +8,7 @@ It is designed to help embedded developers to write portable bussiness code and 
 * IPC.
 
 # Quick Start
-The quickest way to get started with Mblue is to clone the project and run the demo on a Linux.
+The quickest way to get started with Mblue is to clone the project and run the sample on a Linux.
 
 Install development tools:
 ```bash
@@ -20,7 +20,7 @@ $ mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=../linux_m32.cmake ..
 $ make
 $ ./mblue
 ```
-You will see that a simple demo is running with a timer fired once per second.
+You will see that the sample is running with a timer fired once per second.
 
 # Learn More
 More infomation can be found at [wiki](https://github.com/licett/mblue/wiki).

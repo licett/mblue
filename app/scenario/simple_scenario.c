@@ -71,7 +71,7 @@ static void scenario_launch(struct mblue_segment *ms)
 {
 	delayed_event_queue.init(&delayed_event_queue, ms);
 	delayed_event_queue.__timer_function = default_timer_event;
-	schedule_default_event(&delayed_event_queue, 10, delayed_work);
+	schedule_default_event(&delayed_event_queue, 1000, delayed_work);
 }
 
 //@override

@@ -72,4 +72,5 @@ update_tag
 # project related files
 mblue
 .vs/
+.idea/
 *.swo
