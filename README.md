@@ -5,7 +5,7 @@ It is designed to help embedded developers to write portable bussiness code and 
 # Features
 * Portable lowlevel operations(including threads, memory, semaphore and etc).
 * SUB/PUB bus.
-* Inter task call.
+* Synchronized and asynchronous Inter-task call.
 
 # Quick Start
 The quickest way to get started with Mblue is to clone the project and run the sample on a Linux.
