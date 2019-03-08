@@ -83,7 +83,7 @@ static uint8_t *__log_get_file_name_pointer(uint8_t *full_path, uint32_t len)
 	return q;
 }
 
-mblue_errcode log_service_write(uint32_t level, uint8_t *source, void *fmt, ...)
+mblue_errcode log_service_write(uint32_t level, char *source, void *fmt, ...)
 {
 	char *tmp;
 	uint8_t *p;
