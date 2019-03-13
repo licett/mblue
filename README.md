@@ -12,8 +12,9 @@ The quickest way to get started with Mblue is to clone the project and run the s
 
 Install development tools:
 ```bash
-$ sudo apt install build-essential cmake g++-multilib
+$ sudo apt install build-essential cmake gcc-multilib
 ```
+You may also need to upgrade your cmake by downloading the lasteast release from [CMAKE](https://cmake.org/download/)
 Compile MBlue with cmake(make sure you are in the root directory of MBlue):
 ```bash
 $ mkdir build && cd build && cmake -DCMAKE_TOOLCHAIN_FILE=../linux_m32.cmake ..
