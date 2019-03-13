@@ -14,7 +14,7 @@ Install development tools:
 ```bash
 $ sudo apt install build-essential gcc-multilib
 ```
-You need to install cmake by downloading the lasteast release from [CMAKE](https://cmake.org/download/)
+You need to install cmake by downloading the lasteast release from [CMAKE](https://cmake.org/download/).
 
 Then compile MBlue with cmake(make sure you are in the root directory of MBlue):
 ```bash
