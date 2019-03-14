@@ -8,7 +8,7 @@ include_directories(middleware/components/event_queue)
 include_directories(middleware/components/log)
 include_directories(middleware/components/map)
 include_directories(middleware/components/message)
-include_directories(middleware/components/message_queue)
+include_directories(middleware/components/queue)
 include_directories(middleware/components/persistence_manager)
 include_directories(middleware/components/power)
 include_directories(middleware/components/protocal_buffer)
@@ -61,8 +61,8 @@ set(SOURCE_FILES
         middleware/components/message/mblue_message.c
         middleware/components/message/mblue_message.h
         middleware/components/message/message_def.h
-        middleware/components/message_queue/message_queue.c
-        middleware/components/message_queue/message_queue.h
+        middleware/components/queue/mblue_queue.c
+        middleware/components/queue/mblue_queue.h
         middleware/components/protocal_buffer/pb.h
         middleware/components/protocal_buffer/pb_common.c
         middleware/components/protocal_buffer/pb_common.h

@@ -15,7 +15,7 @@
  *
  * =====================================================================================
  */
-#include "message_queue.h"
+#include "mblue_queue.h"
 #include "mblue_assert.h"
 #include "mblue_heap.h"
 #include "custom_int.h"
@@ -28,7 +28,7 @@
  *		1 otherwise.
  * =====================================================================================
  */
-static inline int _queue_at_capacity(struct message_queue* queue)
+static inline int _queue_at_capacity(struct mblue_queue* queue)
 {
 	return queue->size >= queue->capacity;
 }
@@ -42,25 +42,17 @@ static inline int _queue_at_capacity(struct message_queue* queue)
  *  @return NULL if initialization failed and valid message_queue obj otherwise.
  * =====================================================================================
  */
-static int queue_init(struct message_queue *mq, uint32_t size)
+static int queue_init(struct mblue_queue *mq, uint8_t *data, uint32_t size)
 {
 	if (size > MAX_MESSAGE_QUEUE_ITEMS)
 	{
 		return -1;
 	}
 
-	void **data = (void **)mblue_malloc(size * sizeof(void *));
-	//cb  = (struct common_bundle *)mblue_malloc(size * sizeof(struct common_bundle));
-	if (!data)
-	{
-		// In case of mblue_free(NULL), no operation is performed.
-		return -1;
-	}
-
 	mq->size = 0;
 	mq->next = 0;
 	mq->capacity = size;
-	mq->data = data;
+	mq->data = (void **)data;
 	return 0;
 }
 
@@ -70,7 +62,7 @@ static int queue_init(struct message_queue *mq, uint32_t size)
  *  Description:  releases the queue resources.
  * =====================================================================================
  */
-static int queue_uninit(struct message_queue* queue)
+static int queue_uninit(struct mblue_queue* queue)
 {
 	mblue_free(queue->data);
 	mblue_free(queue);
@@ -85,19 +77,17 @@ static int queue_uninit(struct message_queue* queue)
  *	-1: add failed
  * =====================================================================================
  */
-static int queue_add(struct message_queue* queue, void* value)
+static int queue_add(struct mblue_queue* queue, void* value)
 {
 	uint32_t key = os_enter_critical();
-	if (_queue_at_capacity(queue))
-	{
+	if (_queue_at_capacity(queue)) {
 		_ASSERT(FALSE);
 		os_exit_critical(key);
 		return -1;
 	}
 
 	int pos = queue->next + queue->size;
-	if (pos >= queue->capacity)
-	{
+	if (pos >= queue->capacity) {
 		pos -= queue->capacity;
 	}
 
@@ -117,18 +107,16 @@ static int queue_add(struct message_queue* queue, void* value)
  *  @return NULL if the queue is empty
  * =====================================================================================
  */
-static void* queue_remove(struct message_queue* queue)
+static void* queue_remove(struct mblue_queue* queue)
 {
 	void* value = NULL;
 
 	uint32_t key = os_enter_critical();
-	if (queue->size > 0)
-	{
+	if (queue->size > 0) {
 		value = queue->data[queue->next];
 		queue->next++;
 		queue->size--;
-		if (queue->next >= queue->capacity)
-		{
+		if (queue->next >= queue->capacity) {
 			queue->next -= queue->capacity;
 		}
 	}
@@ -143,35 +131,55 @@ static void* queue_remove(struct message_queue* queue)
  *  @return NULL if the queue is empty
  * =====================================================================================
  */
-/*static void* queue_peek(struct message_queue* queue)
+static void* queue_peek(struct mblue_queue* queue)
 {
 	return queue->size ? queue->data[queue->next] : NULL;
-}*/
+}
 
-struct message_queue *mblue_mq_alloc(uint32_t size)
+static int queue_size(struct mblue_queue* queue)
 {
-	struct message_queue *mq = (struct message_queue *)mblue_malloc
-					(sizeof(struct message_queue));
+	return queue->size;
+}
+
+struct mblue_queue *mblue_queue_alloc(uint32_t size)
+{
+	struct mblue_queue *mq = (struct mblue_queue *)mblue_malloc
+					(sizeof(struct mblue_queue));
 	if (!mq) {
-		_ASSERT(0);
 		goto fail_wrapper;
 	}
-
-	mq->init = queue_init;
-	mq->add = queue_add;
-	mq->remove = queue_remove;
-	mq->uninit = queue_uninit;
-
-	if (!mq->init(mq, size)) {
-		return mq;
+	uint8_t *data = mblue_malloc(size * sizeof(void *));
+	if (!data) {
+		goto fail_data;
 	}
 
+	if (mblue_queue_construct(mq, data, size) == MBLUE_OK) {
+		return mq;
+	}
+	mblue_free(data);
+fail_data:
 	mblue_free(mq);
 fail_wrapper:
+	_ASSERT(FALSE);
 	return NULL;
 }
 
-int mblue_mq_release(struct message_queue *mq)
+mblue_errcode mblue_queue_construct(struct mblue_queue *mq, uint8_t *data, uint32_t size)
+{
+	mq->init = queue_init;
+	mq->add = queue_add;
+	mq->peek = queue_peek;
+	mq->get_size = queue_size;
+	mq->remove = queue_remove;
+	mq->uninit = queue_uninit;
+
+	if (!mq->init(mq, data, size)) {
+		return MBLUE_OK;
+	}
+	return MBLUE_ERR_NOMEM;
+}
+
+int mblue_queue_release(struct mblue_queue *mq)
 {
 	return mq->uninit(mq);
 }
