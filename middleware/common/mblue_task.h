@@ -40,7 +40,7 @@ struct mblue_task {
 	mblue_errcode (*nproc)(struct mblue_task *task, struct mblue_message *msg);//notification of task
 	mblue_errcode (*tpend)(struct mblue_task *task);		//alternative of sem_pend(task->call_sem)
 	mblue_errcode (*tpost)(struct mblue_task *task);		//alternative of sem_post(task->call_sem)
-	struct message_queue *mq;	 //todo list of current task
+	struct mblue_queue *mq;	 //todo list of current task
 	struct mblue_semaphore msg_sem;  //pend current task when mq is empty
 	struct mblue_semaphore call_sem; //pend current task when invoke remote call
 	void *extra;

@@ -17,7 +17,7 @@
  */
 #include "mblue_stddefine.h"
 #include "task_manager.h"
-#include "message_queue.h"
+#include "mblue_queue.h"
 #include "mblue_task_cfg.h"
 #include "mblue_stdtask.h"
 #include "mblue_semaphore.h"
@@ -122,7 +122,7 @@ static void *template_proc(void *a0)
 	struct mblue_task *task;
 	struct mblue_message *msg;
 	struct mblue_semaphore *msg_sem;
-	struct message_queue *mq;
+	struct mblue_queue *mq;
 
 	task = (struct mblue_task *)a0;		
 	_ASSERT(task && task->mq);
@@ -151,7 +151,7 @@ static void *template_proc(void *a0)
 
 static mblue_errcode template_msg_post(struct mblue_task *task, struct mblue_message *msg)
 {
-	struct message_queue *mq;
+	struct mblue_queue *mq;
 	struct mblue_semaphore *sem;
 
 	mq = task->mq;
@@ -203,7 +203,7 @@ static struct mblue_task *task_start(
 	task->nproc		= nproc;
 	task->tpend		= tpend;
 	task->tpost		= tpost;
-	task->mq		= mblue_mq_alloc(elements_in_queue);
+	task->mq		= mblue_queue_alloc(elements_in_queue);
 	if(!(task->mq)) {
 		goto fail_mq;
 	}
@@ -218,7 +218,7 @@ static struct mblue_task *task_start(
 	}
 	
 	_ASSERT(FALSE);
-	mblue_mq_release(task->mq);
+	mblue_queue_release(task->mq);
 fail_mq:
 	if (task_in_heap) {
 		mblue_free(task);
