@@ -6,6 +6,7 @@
 static int system_preinit(void)
 {
 	// preinit such as clock/hardware init 
+	return 0;
 }
 
 int main(void)
