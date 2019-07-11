@@ -7,6 +7,9 @@ It is designed to help embedded developers to write portable bussiness code and 
 * SUB/PUB bus.
 * Synchronized and asynchronous Inter-task call.
 
+# Current Status
+MBlue is now fairly stable and is running on several products on sales such as Motor trackers, AI mouse and Earphones.
+
 # Quick Start
 The quickest way to get started with Mblue is to clone the project and run the sample on a Linux.
 
