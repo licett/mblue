@@ -26,7 +26,7 @@ $ make
 $ ./mblue
 ```
 You will see that the sample is running with a timer fired once per second.
-Please refer to [FAQ](https://github.com/licett/mblue/wiki#faq) about what does this sample mean.
+Please refer to [FAQ](https://github.com/licett/mblue/wiki#faq) about what this sample tries to demonstrate.
 
 # Learn More
 More infomation can be found at [wiki](https://github.com/licett/mblue/wiki).
